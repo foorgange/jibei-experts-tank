@@ -1,0 +1,10 @@
+import request from '@/utils/request'
+
+// 查询${functionName}列表
+export function list${BusinessName}(query) {
+  return request({
+    url: '/${moduleName}/${businessName}/list',
+    method: 'get',
+    params: query
+  })
+}

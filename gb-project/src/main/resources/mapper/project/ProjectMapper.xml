@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jb.project.mapper.ProjectMapper">
+
+    <resultMap type="Project" id="ProjectResult">
+        <result property="projectId"    column="project_id"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="projectContent"    column="project_content"    />
+        <result property="seniorNum"    column="senior_num"    />
+        <result property="middleNum"    column="middle_num"    />
+        <result property="primaryNum"    column="primary_num"    />
+        <result property="owner"    column="owner"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="finishTime"    column="finish_time"    />
+        <result property="createUserId"    column="create_user_id"    />
+        <result property="createUserName"    column="create_user_name"    />
+        <result property="manageUser"    column="manage_user"    />
+        <result property="projectStatus"    column="project_status"    />
+        <result property="extractionStatus"    column="extraction_status"    />
+    </resultMap>
+
+    <resultMap type="ProjectExperts" id="ProjectExpertsResult">
+        <result property="userId" column="user_id"/>
+        <result property="expertProperties" column="expert_properties"/>
+        <result property="expertStar" column="expert_star"/>
+        <result property="birthday" column="birthday"/>
+        <result property="area" column="area"/>
+        <result property="city" column="city"/>
+        <result property="address" column="address"/>
+        <result property="education" column="education"/>
+        <result property="graduateSchool" column="graduate_school"/>
+        <result property="graduateDate" column="graduate_date"/>
+        <result property="idNumber" column="id_number"/>
+        <result property="userStatus" column="user_status"/>
+        <result property="workPlace" column="work_place"/>
+        <result property="positionId" column="position_id"/>
+        <result property="titleId" column="title_id"/>
+        <result property="majorId" column="major_id"/>
+        <result property="expertClassId1" column="expert_class_id_1"/>
+        <result property="expertClassId2" column="expert_class_id_2"/>
+        <result property="expertClassId3" column="expert_class_id_3"/>
+        <result property="fax" column="fax"/>
+        <result property="postcodes" column="postcodes"/>
+        <result property="workPerformance" column="work_performance"/>
+        <result property="workResume" column="work_resume"/>
+        <result property="mainProperty" column="main_property"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="email" column="email"/>
+        <result property="phoneNumber" column="phonenumber"/>
+        <result property="sex" column="sex"/>
+        <result property="avatar" column="avatar"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <resultMap id="TaskMemberInfoResult" type="TaskMemberInfo">
+        <result property="userId" column="user_id"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="taskId" column="task_id"/>
+        <result property="taskType" column="task_type"/>
+        <result property="taskStatus" column="task_status"/>
+    </resultMap>
+
+    <sql id="selectProjectVo">
+        select project.project_id project_id,
+               project.project_name project_name,
+               project.project_content project_content,
+               project.senior_num senior_num,
+               project.middle_num middle_num,
+               project.primary_num primary_num,
+               project.owner owner,
+               project.create_time create_time,
+               project.finish_time finish_time,
+               project.create_user_id create_user_id,
+               sys_user.nick_name create_user_name,
+               project.manage_user manage_user,
+               project.project_status project_status,
+               project.extraction_status extraction_status
+        from project
+        left join sys_user on project.create_user_id = sys_user.user_id
+
+    </sql>
+    <sql id="selectOneProjectVo">
+        select distinct project.project_id project_id,
+                        project.project_name project_name,
+                        project.project_content project_content,
+                        project.senior_num senior_num,
+                        project.middle_num middle_num,
+                        project.primary_num primary_num,
+                        project.owner owner, project.create_time create_time,
+                        project.finish_time finish_time,
+                        project.create_user_id create_user_id,
+                        sys_user.nick_name create_user_name,
+                        project.manage_user manage_user,
+                        project.project_status project_status,
+                        project.extraction_status extraction_status
+        from project
+        left join sys_user on project.create_user_id = sys_user.user_id
+
+    </sql>
+
+
+    <select id="selectProjectList" parameterType="Project" resultMap="ProjectResult">
+        <include refid="selectProjectVo"/>
+        <where>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            <if test="projectContent != null  and projectContent != ''"> and project.project_content = #{projectContent}</if>
+            <if test="seniorNum != null "> and project.senior_num = #{seniorNum}</if>
+            <if test="middleNum != null "> and project.middle_num = #{middleNum}</if>
+            <if test="primaryNum != null "> and project.primary_num = #{primaryNum}</if>
+            <if test="owner != null  and owner != ''"> and project.owner = #{owner}</if>
+            <if test="finishTime != null "> and project.finish_time = #{finishTime}</if>
+            <if test="createUserId != null "> and project.create_user_id = #{createUserId}</if>
+            <if test="createUserName != null "> and sys_user.nick_name = #{createUserName}</if>
+            <if test="manageUser != null  and manageUser != ''"> and project.manage_user = #{manageUser}</if>
+            <if test="projectStatus != null "> and project.project_status = #{projectStatus}</if>
+            <if test="extractionStatus != null "> and project.extraction_status = #{extractionStatus}</if>
+        </where>
+    </select>
+
+    <select id="selectProjectByProjectId" parameterType="Long" resultMap="ProjectResult">
+        <include refid="selectProjectVo"/>
+        where project_id = #{projectId}
+    </select>
+
+    <insert id="insertProject" parameterType="Project" useGeneratedKeys="true" keyProperty="projectId">
+        insert into project
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="projectName != null">project_name,</if>
+            <if test="projectContent != null">project_content,</if>
+            <if test="seniorNum != null">senior_num,</if>
+            <if test="middleNum != null">middle_num,</if>
+            <if test="primaryNum != null">primary_num,</if>
+            <if test="owner != null">owner,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="finishTime != null">finish_time,</if>
+            <if test="createUserId != null">create_user_id,</if>
+            <if test="manageUser != null">manage_user,</if>
+            <if test="projectStatus != null">project_status,</if>
+            <if test="extractionStatus != null">extraction_status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="projectName != null">#{projectName},</if>
+            <if test="projectContent != null">#{projectContent},</if>
+            <if test="seniorNum != null">#{seniorNum},</if>
+            <if test="middleNum != null">#{middleNum},</if>
+            <if test="primaryNum != null">#{primaryNum},</if>
+            <if test="owner != null">#{owner},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="finishTime != null">#{finishTime},</if>
+            <if test="createUserId != null">#{createUserId},</if>
+            <if test="manageUser != null">#{manageUser},</if>
+            <if test="projectStatus != null">#{projectStatus},</if>
+            <if test="extractionStatus != null">#{extractionStatus},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProject" parameterType="Project">
+        update project
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="projectName != null">project_name = #{projectName},</if>
+            <if test="projectContent != null">project_content = #{projectContent},</if>
+            <if test="seniorNum != null">senior_num = #{seniorNum},</if>
+            <if test="middleNum != null">middle_num = #{middleNum},</if>
+            <if test="primaryNum != null">primary_num = #{primaryNum},</if>
+            <if test="owner != null">owner = #{owner},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="finishTime != null">finish_time = #{finishTime},</if>
+            <if test="createUserId != null">create_user_id = #{createUserId},</if>
+            <if test="manageUser != null">manage_user = #{manageUser},</if>
+            <if test="projectStatus != null">project_status = #{projectStatus},</if>
+            <if test="extractionStatus != null">extraction_status = #{extractionStatus},</if>
+        </trim>
+        where project_id = #{projectId}
+    </update>
+
+    <delete id="deleteProjectByProjectId" parameterType="Long">
+        delete from project where project_id = #{projectId}
+    </delete>
+
+    <delete id="deleteProjectByProjectIds" parameterType="String">
+        delete from project where project_id in
+        <foreach item="projectId" collection="array" open="(" separator="," close=")">
+            #{projectId}
+        </foreach>
+    </delete>
+
+    <select id="getProjectIdByName" parameterType="String" resultType="java.lang.Integer">
+        select project_id from project
+        where project_name = #{projectName}
+    </select>
+
+
+    <insert id="insertProjectExpertProject" parameterType="ProjectExpertProject" >
+        insert into project_expert_project
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="projectId != null">project_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="projectTaskStatus != null">project_task_status,</if>
+            <if test="taskType != null">task_type,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="projectId != null">#{projectId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="projectTaskStatus != null">#{projectTaskStatus},</if>
+            <if test="taskType != null">#{taskType},</if>
+        </trim>
+    </insert>
+
+    <select id="getUserIdList" resultType="java.lang.Integer">
+        select user_id from project_expert_project
+        where project_id = #{proId}
+    </select>
+
+    <select id="getUserStarById" resultType="java.lang.Long">
+        select expert_star from project_experts
+        where user_id = #{userId}
+    </select>
+
+    <select id="getProjectIdByUserId" resultType="java.lang.Integer">
+        select project_id from project_expert_project
+        where user_id = #{userId}
+    </select>
+
+    <select id="getJoinedProjectListByUserId" resultMap="ProjectResult">
+        <include refid="selectOneProjectVo"/>
+        join project_expert_project on project.project_id = project_expert_project.project_id
+        where project_expert_project.user_id = #{userId} and project.create_user_id != #{userId}
+    </select>
+
+    <select id="getJoinedExperts" resultMap="ProjectExpertsResult">
+        select su.nick_name                      nick_name,
+               su.email                          email,
+               su.phonenumber                    phonenumber,
+               su.sex                            sex,
+               su.avatar                         avatar,
+               sd.dept_name                      dept_name,
+               sd.dept_id                        dept_id,
+               project_experts.user_id           user_id,
+               project_experts.expert_properties expert_properties,
+               project_experts.expert_star       expert_star,
+               project_experts.birthday          birthday,
+               project_experts.area              area,
+               project_experts.city              city,
+               project_experts.address           address,
+               project_experts.education         education,
+               project_experts.graduate_school   graduate_school,
+               project_experts.graduate_date     graduate_date,
+               project_experts.id_number         id_number,
+               project_experts.user_status       user_status,
+               project_experts.work_place        work_place,
+               project_experts.position_id       position_id,
+               project_experts.title_id          title_id,
+               project_experts.major_id          major_id,
+               project_experts.expert_class_id_1 expert_class_id_1,
+               project_experts.expert_class_id_2 expert_class_id_2,
+               project_experts.expert_class_id_3 expert_class_id_3,
+               project_experts.fax               fax,
+               project_experts.postcodes         postcodes,
+               project_experts.work_performance  work_performance,
+               project_experts.work_resume       work_resume,
+               project_experts.main_property     main_property,
+               project_experts.create_time       create_time
+        from project_experts
+                join sys_user su on project_experts.user_id = su.user_id
+                join sys_dept sd on su.dept_id = sd.dept_id
+                join project_expert_project pep on project_experts.user_id = pep.user_id
+                where pep.project_id = #{projectId}
+                order by pep.project_user_id
+    </select>
+
+    <select id="getMemberTaskInfoList" resultMap="TaskMemberInfoResult">
+                select su.user_id user_id,
+                       su.nick_name nick_name,
+                       pt.task_id task_id,
+                       pt.task_type task_type,
+                       pt.task_status task_status
+                from sys_user su
+                join project_task pt on su.user_id = pt.user_id
+                where pt.project_id = #{projectId}
+    </select>
+
+    <update id="updateProjectStatus2to3">
+        update project
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="projectStatus != null">project_status = 3,</if>
+        </trim>
+        where project_id = #{projectId}
+    </update>
+
+
+</mapper>

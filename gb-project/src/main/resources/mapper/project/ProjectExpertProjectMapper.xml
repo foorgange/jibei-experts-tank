@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jb.project.mapper.ProjectExpertProjectMapper">
+
+    <resultMap type="ProjectExpertProject" id="ProjectExpertProjectResult">
+        <result property="projectUserId"    column="project_user_id"    />
+        <result property="projectId"    column="project_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="projectTaskStatus"    column="project_task_status"    />
+        <result property="taskType"    column="task_type"    />
+    </resultMap>
+
+    <sql id="selectProjectExpertProjectVo">
+        select project_expert_project.project_user_id project_user_id, project_expert_project.project_id project_id, project_expert_project.user_id user_id, project_expert_project.project_task_status project_task_status, project_expert_project.task_type task_type from project_expert_project
+
+    </sql>
+
+    <select id="selectProjectExpertProjectList" parameterType="ProjectExpertProject" resultMap="ProjectExpertProjectResult">
+        <include refid="selectProjectExpertProjectVo"/>
+        <where>
+            <if test="projectId != null "> and project_expert_project.project_id = #{projectId}</if>
+            <if test="userId != null "> and project_expert_project.user_id = #{userId}</if>
+            <if test="projectTaskStatus != null "> and project_expert_project.project_task_status = #{projectTaskStatus}</if>
+            <if test="taskType != null "> and project_expert_project.task_type = #{taskType}</if>
+        </where>
+    </select>
+
+    <select id="selectProjectExpertProjectByProjectUserId" parameterType="Long" resultMap="ProjectExpertProjectResult">
+        <include refid="selectProjectExpertProjectVo"/>
+        where project_user_id = #{projectUserId}
+    </select>
+
+    <insert id="insertProjectExpertProject" parameterType="ProjectExpertProject" useGeneratedKeys="true" keyProperty="projectUserId">
+        insert into project_expert_project
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="projectId != null">project_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="projectTaskStatus != null">project_task_status,</if>
+            <if test="taskType != null">task_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="projectId != null">#{projectId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="projectTaskStatus != null">#{projectTaskStatus},</if>
+            <if test="taskType != null">#{taskType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProjectExpertProject" parameterType="ProjectExpertProject">
+        update project_expert_project
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="projectId != null">project_id = #{projectId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="projectTaskStatus != null">project_task_status = #{projectTaskStatus},</if>
+            <if test="taskType != null">task_type = #{taskType},</if>
+        </trim>
+        where project_user_id = #{projectUserId}
+    </update>
+
+    <delete id="deleteProjectExpertProjectByProjectUserId" parameterType="Long">
+        delete from project_expert_project where project_user_id = #{projectUserId}
+    </delete>
+
+    <delete id="deleteProjectExpertProjectByProjectUserIds" parameterType="String">
+        delete from project_expert_project where project_user_id in
+        <foreach item="projectUserId" collection="array" open="(" separator="," close=")">
+            #{projectUserId}
+        </foreach>
+    </delete>
+</mapper>

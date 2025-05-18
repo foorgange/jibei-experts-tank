@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jb.expert.mapper.ProjectExpertsMapper">
+
+    <resultMap type="com.jb.expert.domain.ProjectExperts" id="ProjectExpertsResult">
+        <result property="userId" column="user_id"/>
+        <result property="expertProperties" column="expert_properties"/>
+        <result property="expertStar" column="expert_star"/>
+        <result property="birthday" column="birthday"/>
+        <result property="area" column="area"/>
+        <result property="city" column="city"/>
+        <result property="address" column="address"/>
+        <result property="education" column="education"/>
+        <result property="graduateSchool" column="graduate_school"/>
+        <result property="graduateDate" column="graduate_date"/>
+        <result property="idNumber" column="id_number"/>
+        <result property="userStatus" column="user_status"/>
+        <result property="workPlace" column="work_place"/>
+        <result property="positionId" column="position_id"/>
+        <result property="titleId" column="title_id"/>
+        <result property="majorId" column="major_id"/>
+        <result property="expertClassId1" column="expert_class_id_1"/>
+        <result property="expertClassId2" column="expert_class_id_2"/>
+        <result property="expertClassId3" column="expert_class_id_3"/>
+        <result property="fax" column="fax"/>
+        <result property="postcodes" column="postcodes"/>
+        <result property="workPerformance" column="work_performance"/>
+        <result property="workResume" column="work_resume"/>
+        <result property="mainProperty" column="main_property"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="email" column="email"/>
+        <result property="phoneNumber" column="phonenumber"/>
+        <result property="sex" column="sex"/>
+        <result property="avatar" column="avatar"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <sql id="selectProjectExpertsVo">
+        select su.nick_name                      nick_name,
+               su.email                          email,
+               su.phonenumber                    phonenumber,
+               su.sex                            sex,
+               su.avatar                         avatar,
+               sd.dept_name                      dept_name,
+               sd.dept_id                        dept_id,
+               project_experts.user_id           user_id,
+               project_experts.expert_properties expert_properties,
+               project_experts.expert_star       expert_star,
+               project_experts.birthday          birthday,
+               project_experts.area              area,
+               project_experts.city              city,
+               project_experts.address           address,
+               project_experts.education         education,
+               project_experts.graduate_school   graduate_school,
+               project_experts.graduate_date     graduate_date,
+               project_experts.id_number         id_number,
+               project_experts.user_status       user_status,
+               project_experts.work_place        work_place,
+               project_experts.position_id       position_id,
+               project_experts.title_id          title_id,
+               project_experts.major_id          major_id,
+               project_experts.expert_class_id_1 expert_class_id_1,
+               project_experts.expert_class_id_2 expert_class_id_2,
+               project_experts.expert_class_id_3 expert_class_id_3,
+               project_experts.fax               fax,
+               project_experts.postcodes         postcodes,
+               project_experts.work_performance  work_performance,
+               project_experts.work_resume       work_resume,
+               project_experts.main_property     main_property,
+               project_experts.create_time       create_time
+        from project_experts
+                 join sys_user su on project_experts.user_id = su.user_id
+                 join sys_dept sd on su.dept_id = sd.dept_id
+    </sql>
+
+    <select id="selectProjectExpertsList" parameterType="com.jb.expert.domain.ProjectExperts" resultMap="ProjectExpertsResult">
+        <include refid="selectProjectExpertsVo"/>
+        <where>
+            <if test="expertProperties != null ">and project_experts.expert_properties = #{expertProperties}</if>
+            <if test="expertStar != null ">and project_experts.expert_star = #{expertStar}</if>
+            <if test="birthday != null ">and project_experts.birthday = #{birthday}</if>
+            <if test="area != null  and area != ''">and project_experts.area = #{area}</if>
+            <if test="city != null  and city != ''">and project_experts.city = #{city}</if>
+            <if test="address != null  and address != ''">and address like concat('%', #{address}, '%')</if>
+            <if test="education != null  and education != ''">and project_experts.education = #{education}</if>
+            <if test="graduateSchool != null  and graduateSchool != ''">and graduate_school like concat('%',
+                #{graduateSchool}, '%')
+            </if>
+            <if test="graduateDate != null ">and project_experts.graduate_date = #{graduateDate}</if>
+            <if test="idNumber != null  and idNumber != ''">and id_number like concat('%', #{idNumber}, '%')</if>
+            <if test="userStatus != null ">and project_experts.user_status = #{userStatus}</if>
+            <if test="workPlace != null  and workPlace != ''">and work_place like concat('%', #{workPlace}, '%')</if>
+            <if test="positionId != null ">and project_experts.position_id = #{positionId}</if>
+            <if test="titleId != null ">and project_experts.title_id = #{titleId}</if>
+            <if test="majorId != null ">and project_experts.major_id = #{majorId}</if>
+            <if test="expertClassId1 != null ">and (project_experts.expert_class_id_1 = #{expertClassId1} or project_experts.expert_class_id_2 = #{expertClassId1} or project_experts.expert_class_id_3 = #{expertClassId1})</if>
+            <if test="nickName != null ">and su.nick_name like concat('%', #{nickName}, '%')</if>
+            <if test="deptId != null ">AND (su.dept_id = #{deptId} OR su.dept_id IN ( SELECT sd.dept_id FROM sys_dept sd WHERE
+                find_in_set(#{deptId}, ancestors) ))</if>
+        </where>
+    </select>
+
+    <select id="selectProjectExpertsByUserId" parameterType="java.lang.Long" resultMap="ProjectExpertsResult">
+        <include refid="selectProjectExpertsVo"/>
+        where project_experts.user_id = #{userId}
+    </select>
+
+    <insert id="insertProjectExperts" parameterType="com.jb.expert.domain.ProjectExperts" useGeneratedKeys="true" keyProperty="userId">
+        insert into project_experts
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="expertProperties != null">expert_properties,</if>
+            <if test="expertStar != null">expert_star,</if>
+            <if test="birthday != null">birthday,</if>
+            <if test="area != null">area,</if>
+            <if test="city != null">city,</if>
+            <if test="address != null">address,</if>
+            <if test="education != null">education,</if>
+            <if test="graduateSchool != null">graduate_school,</if>
+            <if test="graduateDate != null">graduate_date,</if>
+            <if test="idNumber != null">id_number,</if>
+            <if test="userStatus != null">user_status,</if>
+            <if test="workPlace != null">work_place,</if>
+            <if test="positionId != null">position_id,</if>
+            <if test="titleId != null">title_id,</if>
+            <if test="majorId != null">major_id,</if>
+            <if test="expertClassId1 != null">expert_class_id_1,</if>
+            <if test="expertClassId2 != null">expert_class_id_2,</if>
+            <if test="expertClassId3 != null">expert_class_id_3,</if>
+            <if test="fax != null">fax,</if>
+            <if test="postcodes != null">postcodes,</if>
+            <if test="workPerformance != null">work_performance,</if>
+            <if test="workResume != null">work_resume,</if>
+            <if test="mainProperty != null">main_property,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="expertProperties != null">#{expertProperties},</if>
+            <if test="expertStar != null">#{expertStar},</if>
+            <if test="birthday != null">#{birthday},</if>
+            <if test="area != null">#{area},</if>
+            <if test="city != null">#{city},</if>
+            <if test="address != null">#{address},</if>
+            <if test="education != null">#{education},</if>
+            <if test="graduateSchool != null">#{graduateSchool},</if>
+            <if test="graduateDate != null">#{graduateDate},</if>
+            <if test="idNumber != null">#{idNumber},</if>
+            <if test="userStatus != null">#{userStatus},</if>
+            <if test="workPlace != null">#{workPlace},</if>
+            <if test="positionId != null">#{positionId},</if>
+            <if test="titleId != null">#{titleId},</if>
+            <if test="majorId != null">#{majorId},</if>
+            <if test="expertClassId1 != null">#{expertClassId1},</if>
+            <if test="expertClassId2 != null">#{expertClassId2},</if>
+            <if test="expertClassId3 != null">#{expertClassId3},</if>
+            <if test="fax != null">#{fax},</if>
+            <if test="postcodes != null">#{postcodes},</if>
+            <if test="workPerformance != null">#{workPerformance},</if>
+            <if test="workResume != null">#{workResume},</if>
+            <if test="mainProperty != null">#{mainProperty},</if>
+        </trim>
+    </insert>
+
+    <update id="updateProjectExperts" parameterType="com.jb.expert.domain.ProjectExperts">
+        update project_experts
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="expertProperties != null">expert_properties = #{expertProperties},</if>
+            <if test="expertStar != null">expert_star = #{expertStar},</if>
+            <if test="birthday != null">birthday = #{birthday},</if>
+            <if test="area != null">area = #{area},</if>
+            <if test="city != null">city = #{city},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="education != null">education = #{education},</if>
+            <if test="graduateSchool != null">graduate_school = #{graduateSchool},</if>
+            <if test="graduateDate != null">graduate_date = #{graduateDate},</if>
+            <if test="idNumber != null">id_number = #{idNumber},</if>
+            <if test="userStatus != null">user_status = #{userStatus},</if>
+            <if test="workPlace != null">work_place = #{workPlace},</if>
+            <if test="positionId != null">position_id = #{positionId},</if>
+            <if test="titleId != null">title_id = #{titleId},</if>
+            <if test="majorId != null">major_id = #{majorId},</if>
+            <if test="expertClassId1 != null">expert_class_id_1 = #{expertClassId1},</if>
+            <if test="expertClassId2 != null">expert_class_id_2 = #{expertClassId2},</if>
+            <if test="expertClassId3 != null">expert_class_id_3 = #{expertClassId3},</if>
+            <if test="fax != null">fax = #{fax},</if>
+            <if test="postcodes != null">postcodes = #{postcodes},</if>
+            <if test="workPerformance != null">work_performance = #{workPerformance},</if>
+            <if test="workResume != null">work_resume = #{workResume},</if>
+            <if test="mainProperty != null">main_property = #{mainProperty},</if>
+            <if test="createTime != null">create_time = #{createTime}</if>
+        </trim>
+        where user_id = #{userId}
+    </update>
+
+    <delete id="deleteProjectExpertsByUserId" parameterType="java.lang.Long">
+        delete
+        from project_experts
+        where user_id = #{userId}
+    </delete>
+
+    <delete id="deleteProjectExpertsByUserIds" parameterType="java.lang.String">
+        delete from project_experts where user_id in
+        <foreach item="userId" collection="array" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+
+    <select id="selectExpertNumByStar" resultType="map">
+        select tmp1.dict_value as expert_star,ifnull(tmp2.num, 0) as num
+        from
+            (select dict_value  from sys_dict_data where dict_type='expert_star') tmp1
+        left join
+            (select expert_star,COUNT(*) as num from project_experts group by expert_star) tmp2
+        on tmp1.dict_value = tmp2.expert_star
+    </select>
+    
+    <select id="selectNewExpertInOneWeek" resultType="map" parameterType="list">
+        select cast((@s:=@s+1) as char)"index", t1.date, cast(ifnull(t2.sum, 0) as char) as sum
+        FROM
+        (select @s:=-1)
+        as t0,
+        (
+        <foreach collection="list" item="value" separator="union">
+            select DATE_SUB(CURDATE(), INTERVAL #{value} DAY) as date
+        </foreach>
+        ) as t1
+
+        left join
+
+        (
+            select count(*)                                 as sum,
+                   DATE_FORMAT(create_time,'%Y-%m-%d')      as date
+            from project_experts
+            group by DATE_FORMAT(create_time,'%Y-%m-%d')
+
+        ) as t2
+
+        on t1.date = t2.date
+        order by t1.date desc
+    </select>
+
+    <!--
+        mapper中的特殊符号请使用 &xxx; 代替，否则会解析成标签从而导致异常
+        &(逻辑与) &amp;<(小于) &lt;>(大于) &gt;"(双引号) &quot;'(单引号) &apos;-->
+    <select id="selectNewExpert" resultType="map" parameterType="int">
+        select cast((@i:=@i+1) as char) 'index', data.date, data.sum
+            from
+        (select @i := -1) indexnum,
+        (select alldate.date date, IFNULL(sumdata.sum,0) sum
+
+         from
+
+             (
+             select DATE (DATE_SUB(CURRENT_DATE, INTERVAL @s := @s+1 day )) as date, @s
+             from
+             project_experts,
+             sys_menu,
+             (select @s := -1) tempday
+             where @s &lt; #{range}-1
+             ORDER BY date
+             ) alldate
+             left join
+             (
+             select count(user_id) as sum,
+             DATE_FORMAT(create_time, '%Y-%m-%d') as date
+             from project_experts
+             GROUP BY date
+             ) sumdata
+
+         on alldate.date = sumdata.date
+         ORDER BY date desc
+        ) data
+        order by date desc
+    </select>
+</mapper>

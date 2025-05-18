@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jb.expert.mapper.PassCodeMapper">
+
+    <resultMap type="PassCode" id="PassCodeResult">
+        <result property="passCodeId"    column="pass_code_id"    />
+        <result property="passCodeValue"    column="pass_code_value"    />
+        <result property="userName"    column="user_name"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="useTime"    column="use_time"    />
+        <result property="codeStatus"    column="code_status"    />
+    </resultMap>
+
+    <sql id="selectPassCodeVo">
+        select pass_code.pass_code_id pass_code_id, pass_code.pass_code_value pass_code_value, pass_code.user_name user_name, pass_code.create_time create_time, pass_code.use_time use_time, pass_code.code_status code_status from pass_code
+
+    </sql>
+
+    <select id="selectPassCodeList" parameterType="PassCode" resultMap="PassCodeResult">
+        <include refid="selectPassCodeVo"/>
+        <where>
+            <if test="passCodeValue != null "> and pass_code.pass_code_value = #{passCodeValue}</if>
+            <if test="userName != null  and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
+            <if test="createTime != null "> and pass_code.create_time = #{createTime}</if>
+            <if test="useTime != null "> and pass_code.use_time = #{useTime}</if>
+            <if test="codeStatus != null  and codeStatus != ''"> and pass_code.code_status = #{codeStatus}</if>
+        </where>
+    </select>
+
+    <select id="selectPassCodeByPassCodeId" parameterType="Long" resultMap="PassCodeResult">
+        <include refid="selectPassCodeVo"/>
+        where pass_code_id = #{passCodeId}
+    </select>
+
+    <select id="selectPassCodeByPassCodeUserName" parameterType="String" resultMap="PassCodeResult">
+        <include refid="selectPassCodeVo"/>
+        where user_name = #{userName}
+    </select>
+
+    <select id="selectPassCodeByPassCodeValue" parameterType="Long" resultMap="PassCodeResult">
+        <include refid="selectPassCodeVo"/>
+        where pass_code_value = #{passCodeValue}
+    </select>
+
+    <insert id="insertPassCode" parameterType="PassCode" useGeneratedKeys="true" keyProperty="passCodeId">
+        insert into pass_code
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="passCodeValue != null">pass_code_value,</if>
+            <if test="userName != null and userName != ''">user_name,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="useTime != null">use_time,</if>
+            <if test="codeStatus != null">code_status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="passCodeValue != null">#{passCodeValue},</if>
+            <if test="userName != null and userName != ''">#{userName},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="useTime != null">#{useTime},</if>
+            <if test="codeStatus != null">#{codeStatus},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePassCode" parameterType="PassCode">
+        update pass_code
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="passCodeValue != null">pass_code_value = #{passCodeValue},</if>
+            <if test="userName != null and userName != ''">user_name = #{userName},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="useTime != null">use_time = #{useTime},</if>
+            <if test="codeStatus != null">code_status = #{codeStatus},</if>
+        </trim>
+        where pass_code_id = #{passCodeId}
+    </update>
+
+    <delete id="deletePassCodeByPassCodeId" parameterType="Long">
+        delete from pass_code where pass_code_id = #{passCodeId}
+    </delete>
+
+    <delete id="deletePassCodeByPassCodeIds" parameterType="String">
+        delete from pass_code where pass_code_id in
+        <foreach item="passCodeId" collection="array" open="(" separator="," close=")">
+            #{passCodeId}
+        </foreach>
+    </delete>
+</mapper>

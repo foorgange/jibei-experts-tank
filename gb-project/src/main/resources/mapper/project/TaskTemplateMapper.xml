@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jb.project.mapper.TaskTemplateMapper">
+
+    <resultMap type="TaskTemplate" id="TaskTemplateResult">
+        <result property="templateId"    column="template_id"    />
+        <result property="templateName"    column="template_name"    />
+        <result property="templatePath"    column="template_path"    />
+    </resultMap>
+
+    <sql id="selectTaskTemplateVo">
+        select task_template.template_id template_id, task_template.template_name template_name, task_template.template_path template_path from task_template
+
+    </sql>
+
+    <select id="selectTaskTemplateList" parameterType="TaskTemplate" resultMap="TaskTemplateResult">
+        <include refid="selectTaskTemplateVo"/>
+        <where>
+            <if test="templateName != null  and templateName != ''"> and template_name like concat('%', #{templateName}, '%')</if>
+            <if test="templatePath != null  and templatePath != ''"> and task_template.template_path = #{templatePath}</if>
+        </where>
+    </select>
+
+    <select id="selectTaskTemplateByTemplateId" parameterType="Long" resultMap="TaskTemplateResult">
+        <include refid="selectTaskTemplateVo"/>
+        where template_id = #{templateId}
+    </select>
+
+    <insert id="insertTaskTemplate" parameterType="TaskTemplate" useGeneratedKeys="true" keyProperty="templateId">
+        insert into task_template
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="templateName != null">template_name,</if>
+            <if test="templatePath != null">template_path,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="templateName != null">#{templateName},</if>
+            <if test="templatePath != null">#{templatePath},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTaskTemplate" parameterType="TaskTemplate">
+        update task_template
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="templateName != null">template_name = #{templateName},</if>
+            <if test="templatePath != null">template_path = #{templatePath},</if>
+        </trim>
+        where template_id = #{templateId}
+    </update>
+
+    <delete id="deleteTaskTemplateByTemplateId" parameterType="Long">
+        delete from task_template where template_id = #{templateId}
+    </delete>
+
+    <delete id="deleteTaskTemplateByTemplateIds" parameterType="String">
+        delete from task_template where template_id in
+        <foreach item="templateId" collection="array" open="(" separator="," close=")">
+            #{templateId}
+        </foreach>
+    </delete>
+</mapper>

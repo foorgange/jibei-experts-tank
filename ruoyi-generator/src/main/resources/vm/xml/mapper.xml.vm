@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${packageName}.mapper.${ClassName}Mapper">
+
+    <resultMap type="${ClassName}" id="${ClassName}Result">
+#foreach ($column in $columns)
+        <result property="${column.javaField}"    column="${column.columnName}"    />
+#if(${column.linkTable}!="")
+        <result property="${column.javaLinkShowField}"    column="${column.linkShowField}"    />
+#end
+#end
+    </resultMap>
+#foreach ($linkTable in $linkTableColumns.entrySet())
+#set($linkTableClass=$linkTable.key.substring(0,1).toUpperCase()+$linkTable.key.substring(1,$linkTable.key.length()))
+    <resultMap type="$linkTableClass" id="${linkTableClass}Result">
+#foreach ($linkTableColumn in $linkTable.value)
+        <result property="${linkTableColumn.javaField}"    column="${linkTableColumn.columnName}"    />
+#end
+    </resultMap>
+#end
+#if($table.sub)
+
+    <resultMap id="${ClassName}${subClassName}Result" type="${ClassName}" extends="${ClassName}Result">
+        <collection property="${subclassName}List" notNullColumn="sub_${subTable.pkColumn.columnName}" javaType="java.util.List" resultMap="${subClassName}Result" />
+    </resultMap>
+
+    <resultMap type="${subClassName}" id="${subClassName}Result">
+#foreach ($column in $subTable.columns)
+        <result property="${column.javaField}"    column="sub_${column.columnName}"    />
+#end
+    </resultMap>
+#end
+
+    <sql id="select${ClassName}Vo">
+#set($flag=false)
+        select#foreach($column in $columns) ${tableName}.${column.columnName} ${column.columnName}#if(${column.linkTable}!="")#set($flag=true), ${column.linkTable}.${column.linkShowField} ${column.linkShowField}#end#if($velocityCount != $columns.size()),#end#end from ${tableName}
+
+    </sql>
+
+    <select id="select${ClassName}List" parameterType="${ClassName}" resultMap="${ClassName}Result">
+        <include refid="select${ClassName}Vo"/>
+#foreach($column in $columns)
+#if(${column.linkTable}!="")
+        left join ${column.linkTable} on ${tableName}.${column.columnName} = ${column.linkTable}.${column.linkField}
+#end
+#end
+        <where>
+#foreach($column in $columns)
+#set($queryType=$column.queryType)
+#set($javaField=$column.javaField)
+#set($javaType=$column.javaType)
+#set($columnName=$column.columnName)
+#set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+#if($column.query)
+#if($column.linkTree==0)
+#if($column.queryType == "EQ")
+#if(${column.linkTable}!="")
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and ${tableName}.${columnName} = #{$javaField}</if>
+            <if test="${column.javaLinkShowField} != null #if(${column.javaLinkShowFieldType} == 'String' ) and ${column.javaLinkShowField.trim()} != ''#end"> and ${column.linkShowField} = #{${column.javaLinkShowField}}</if>
+#else
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and ${tableName}.${columnName} = #{$javaField}</if>
+#end
+#elseif($queryType == "NE")
+#if(${column.linkTable}!="")
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and ${tableName}.${columnName} != #{$javaField}</if>
+            <if test="${column.javaLinkShowField} != null #if(${column.javaLinkShowFieldType} == 'String' ) and ${column.javaLinkShowField.trim()} != ''#end"> and ${column.linkShowField} = #{${column.javaLinkShowField}}</if>
+#else
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and $columnName != #{$javaField}</if>
+#end
+#elseif($queryType == "GT")
+#if(${column.linkTable}!="")
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and ${tableName}.${columnName} &gt; #{$javaField}</if>
+            <if test="${column.javaLinkShowField} != null #if(${column.javaLinkShowFieldType} == 'String' ) and ${column.javaLinkShowField.trim()} != ''#end"> and ${column.linkShowField} &gt; #{${column.javaLinkShowField}}</if>
+#else
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and $columnName &gt; #{$javaField}</if>
+#end
+#elseif($queryType == "GTE")
+#if(${column.linkTable}!="")
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and ${tableName}.${columnName} &gt;= #{$javaField}</if>
+            <if test="${column.javaLinkShowField} != null #if(${column.javaLinkShowFieldType} == 'String' ) and ${column.javaLinkShowField.trim()} != ''#end"> and ${column.linkShowField} &gt;= #{${column.javaLinkShowField}}</if>
+#else
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and $columnName &gt;= #{$javaField}</if>
+#end
+#elseif($queryType == "LT")
+#if(${column.linkTable}!="")
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and ${tableName}.${columnName} &lt; #{$javaField}</if>
+            <if test="${column.javaLinkShowField} != null #if(${column.javaLinkShowFieldType} == 'String' ) and ${column.javaLinkShowField.trim()} != ''#end"> and ${column.linkShowField} &lt; #{${column.javaLinkShowField}}</if>
+#else
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and $columnName &lt; #{$javaField}</if>
+#end
+#elseif($queryType == "LTE")
+#if(${column.linkTable}!="")
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and ${tableName}.${columnName} &lt;= #{$javaField}</if>
+            <if test="${column.javaLinkShowField} != null #if(${column.javaLinkShowFieldType} == 'String' ) and ${column.javaLinkShowField.trim()} != ''#end"> and ${column.linkShowField} &lt;= #{${column.javaLinkShowField}}</if>
+#else
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and $columnName &lt;= #{$javaField}</if>
+#end
+#elseif($queryType == "LIKE")
+#if(${column.linkTable}!="")
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and ${tableName}.${columnName} like concat('%', #{$javaField}, '%')</if>
+            <if test="${column.javaLinkShowField} != null #if(${column.javaLinkShowFieldType} == 'String' ) and ${column.javaLinkShowField.trim()} != ''#end"> and ${column.linkShowField} like concat('%', #{${column.javaLinkShowField}}, '%')</if>
+#else
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and $columnName like concat('%', #{$javaField}, '%')</if>
+#end
+#elseif($queryType == "BETWEEN")
+            <if test="params.begin$AttrName != null and params.begin$AttrName != '' and params.end$AttrName != null and params.end$AttrName != ''"> and $columnName between #{params.begin$AttrName} and #{params.end$AttrName}</if>
+#end
+#elseif($column.linkTree==1)
+#if($column.queryType == "EQ")
+#if($column.linkTable!="")
+            <if test="$javaField != null and $javaField != 0">
+                AND (${tableName}.${columnName} = #{$column.javaField} OR ${tableName}.${columnName} IN ( SELECT ${column.linkTable}.${column.linkField} FROM ${column.linkTable} WHERE find_in_set(#{$column.javaField}, ancestors) ))
+            </if>
+#else
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and $columnName = #{$javaField}</if>
+#end
+#elseif($queryType == "NE")
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and $columnName != #{$javaField}</if>
+#elseif($queryType == "GT")
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and $columnName &gt; #{$javaField}</if>
+#elseif($queryType == "GTE")
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and $columnName &gt;= #{$javaField}</if>
+#elseif($queryType == "LT")
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and $columnName &lt; #{$javaField}</if>
+#elseif($queryType == "LTE")
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and $columnName &lt;= #{$javaField}</if>
+#elseif($queryType == "LIKE")
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and $columnName like concat('%', #{$javaField}, '%')</if>
+#elseif($queryType == "BETWEEN")
+            <if test="params.begin$AttrName != null and params.begin$AttrName != '' and params.end$AttrName != null and params.end$AttrName != ''"> and $columnName between #{params.begin$AttrName} and #{params.end$AttrName}</if>
+#end
+#end
+#end
+#end
+        </where>
+    </select>
+
+    <select id="select${ClassName}By${pkColumn.capJavaField}" parameterType="${pkColumn.javaType}" resultMap="#if($table.sub)${ClassName}${subClassName}Result#else${ClassName}Result#end">
+#if($table.crud || $table.tree || $table.treeTable)
+        <include refid="select${ClassName}Vo"/>
+#foreach($column in $columns)
+#if(${column.linkTable}!="")
+        left join ${column.linkTable} on ${tableName}.${column.columnName} = ${column.linkTable}.${column.linkField}
+#end
+#end
+        where ${pkColumn.columnName} = #{${pkColumn.javaField}}
+#elseif($table.sub)
+        select#foreach($column in $columns) a.$column.columnName#if($velocityCount != $columns.size()),#end#end,
+           #foreach($column in $subTable.columns) b.$column.columnName as sub_$column.columnName#if($velocityCount != $subTable.columns.size()),#end#end
+
+        from ${tableName} a
+        left join ${subTableName} b on b.${subTableFkName} = a.${pkColumn.columnName}
+        where a.${pkColumn.columnName} = #{${pkColumn.javaField}}
+#end
+    </select>
+
+    <insert id="insert${ClassName}" parameterType="${ClassName}"#if($pkColumn.increment) useGeneratedKeys="true" keyProperty="$pkColumn.javaField"#end>
+        insert into ${tableName}
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+#foreach($column in $columns)
+#if($column.columnName != $pkColumn.columnName || !$pkColumn.increment)
+            <if test="$column.javaField != null#if($column.javaType == 'String' && $column.required) and $column.javaField != ''#end">$column.columnName,</if>
+#end
+#end
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+#foreach($column in $columns)
+#if($column.columnName != $pkColumn.columnName || !$pkColumn.increment)
+            <if test="$column.javaField != null#if($column.javaType == 'String' && $column.required) and $column.javaField != ''#end">#{$column.javaField},</if>
+#end
+#end
+         </trim>
+    </insert>
+
+    <update id="update${ClassName}" parameterType="${ClassName}">
+        update ${tableName}
+        <trim prefix="SET" suffixOverrides=",">
+#foreach($column in $columns)
+#if($column.columnName != $pkColumn.columnName)
+            <if test="$column.javaField != null#if($column.javaType == 'String' && $column.required) and $column.javaField != ''#end">$column.columnName = #{$column.javaField},</if>
+#end
+#end
+        </trim>
+        where ${pkColumn.columnName} = #{${pkColumn.javaField}}
+    </update>
+
+    <delete id="delete${ClassName}By${pkColumn.capJavaField}" parameterType="${pkColumn.javaType}">
+        delete from ${tableName} where ${pkColumn.columnName} = #{${pkColumn.javaField}}
+    </delete>
+
+    <delete id="delete${ClassName}By${pkColumn.capJavaField}s" parameterType="String">
+        delete from ${tableName} where ${pkColumn.columnName} in
+        <foreach item="${pkColumn.javaField}" collection="array" open="(" separator="," close=")">
+            #{${pkColumn.javaField}}
+        </foreach>
+    </delete>
+#if($table.sub)
+
+    <delete id="delete${subClassName}By${subTableFkClassName}s" parameterType="String">
+        delete from ${subTableName} where ${subTableFkName} in
+        <foreach item="${subTableFkclassName}" collection="array" open="(" separator="," close=")">
+            #{${subTableFkclassName}}
+        </foreach>
+    </delete>
+
+    <delete id="delete${subClassName}By${subTableFkClassName}" parameterType="${pkColumn.javaType}">
+        delete from ${subTableName} where ${subTableFkName} = #{${subTableFkclassName}}
+    </delete>
+
+    <insert id="batch${subClassName}">
+        insert into ${subTableName}(#foreach($column in $subTable.columns) $column.columnName#if($velocityCount != $subTable.columns.size()),#end#end) values
+		<foreach item="item" index="index" collection="list" separator=",">
+            (#foreach($column in $subTable.columns) #{item.$column.javaField}#if($velocityCount != $subTable.columns.size()),#end#end)
+        </foreach>
+    </insert>
+#end
+#foreach($column in $columns)
+#if(${column.linkTable}!="" && ${column.filterField}!="")
+#set($filterFieldName=$column.javaFilterField.substring(0,1).toUpperCase()+$column.javaFilterField.substring(1,$column.javaFilterField.length()))
+    <select id="select${column.linkTableClass}ListBy${filterFieldName}" parameterType="${column.javaType}" resultMap="${column.linkTableClass}Result">
+        select *
+        from ${column.linkTable}
+        where ${column.filterField} = #{${column.javaFilterField}}
+    </select>
+#end
+#end
+</mapper>

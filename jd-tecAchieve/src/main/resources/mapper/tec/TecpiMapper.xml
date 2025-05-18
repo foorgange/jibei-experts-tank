@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jd.tecachieve.mapper.TecpiMapper">
+
+    <resultMap type="com.jd.tecachieve.domain.Tecpi" id="TecpiResult">
+        <result property="piId"    column="pi_id"    />
+        <result property="piStaffId"    column="pi_staffId"    />
+        <result property="piName"    column="pi_name"    />
+        <result property="piSex"  column="pi_sex"   />
+        <result property="piCollege"    column="pi_college"    />
+        <result property="piJobTitle"    column="pi_jobTitle"    />
+        <result property="piEmail"    column="pi_email"    />
+        <result property="piPhone"    column="pi_phone"    />
+        <result property="piCommAddress"    column="pi_commAddress"    />
+        <result property="piInformation"    column="pi_information"    />
+        <result property="piImg"     column="pi_img"   />
+    </resultMap>
+
+    <sql id="selectTecpiVo">
+        select tec_pi.pi_id pi_id,
+               tec_pi.pi_staffId pi_staffId,
+               tec_pi.pi_name pi_name,
+               tec_pi.pi_sex pi_sex,
+               tec_pi.pi_college pi_college,
+               tec_pi.pi_jobTitle pi_jobTitle,
+               tec_pi.pi_email pi_email,
+               tec_pi.pi_phone pi_phone,
+               tec_pi.pi_commAddress pi_commAddress,
+               tec_pi.pi_information pi_information,
+               tec_pi.pi_img pi_img
+        from tec_pi
+    </sql>
+
+    <select id="selectTecpiList" parameterType="com.jd.tecachieve.domain.Tecpi" resultMap="TecpiResult">
+        <include refid="selectTecpiVo"/>
+        <where>
+            <if test="piStaffId != null and piStaffId != ''">and tec_pi.pi_staffId = #{piStaffId}</if>
+            <if test="piName != null  and piName != ''"> and pi_name like concat('%', #{piName}, '%')</if>
+            <if test="piSex != null  and piSex != ''"> and tec_pi.pi_sex = #{piSex}</if>
+            <if test="piCollege != null  and piCollege != ''"> and tec_pi.pi_college = #{piCollege}</if>
+            <if test="piJobTitle != null  and piJobTitle != ''"> and tec_pi.pi_jobTitle = #{piJobTitle}</if>
+            <if test="piEmail != null  and piEmail != ''"> and tec_pi.pi_email = #{piEmail}</if>
+            <if test="piPhone != null  and piPhone != ''"> and tec_pi.pi_phone = #{piPhone}</if>
+            <if test="piCommAddress != null  and piCommAddress != ''"> and tec_pi.pi_commAddress = #{piCommAddress}</if>
+            <if test="piInformation != null  and piInformation != ''"> and tec_pi.pi_information = #{piInformation}</if>
+            <if test="piImg != null  and piImg != ''"> and tec_pi.pi_img = #{piImg}</if>
+        </where>
+    </select>
+
+    <select id="selectTecpiByPiid" parameterType="Long" resultMap="TecpiResult">
+        <include refid="selectTecpiVo"/>
+        where pi_id = #{piId}
+    </select>
+
+    <insert id="insertTecpi" parameterType="com.jd.tecachieve.domain.Tecpi" useGeneratedKeys="true" keyProperty="piId">
+        insert into tec_pi
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="piStaffId != null">pi_staffId,</if>
+            <if test="piName != null">pi_name,</if>
+            <if test="piSex != null">pi_sex,</if>
+            <if test="piCollege != null">pi_college,</if>
+            <if test="piJobTitle != null">pi_jobTitle,</if>
+            <if test="piEmail != null">pi_email,</if>
+            <if test="piPhone != null">pi_phone,</if>
+            <if test="piCommAddress != null">pi_commAddress,</if>
+            <if test="piInformation != null">pi_information,</if>
+            <if test="piImg != null">pi_img,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="piStaffId != null">#{piStaffId},</if>
+            <if test="piName != null">#{piName},</if>
+            <if test="piSex != null">#{piSex},</if>
+            <if test="piCollege != null">#{piCollege},</if>
+            <if test="piJobTitle != null">#{piJobTitle},</if>
+            <if test="piEmail != null">#{piEmail},</if>
+            <if test="piPhone != null">#{piPhone},</if>
+            <if test="piCommAddress != null">#{piCommAddress},</if>
+            <if test="piInformation != null">#{piInformation},</if>
+            <if test="piImg != null">#{piImg},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTecpi" parameterType="com.jd.tecachieve.domain.Tecpi">
+        update tec_pi
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="piStaffId != null">pi_staffId = #{piStaffId},</if>
+            <if test="piName != null">pi_name = #{piName},</if>
+            <if test="piSex != null">pi_sex = #{piSex},</if>
+            <if test="piCollege != null">pi_college = #{piCollege},</if>
+            <if test="piJobTitle != null">pi_jobTitle = #{piJobTitle},</if>
+            <if test="piEmail != null">pi_email = #{piEmail},</if>
+            <if test="piPhone != null">pi_phone = #{piPhone},</if>
+            <if test="piCommAddress != null">pi_commAddress = #{piCommAddress},</if>
+            <if test="piInformation != null">pi_information = #{piInformation},</if>
+            <if test="piImg != null">pi_img = #{piImg},</if>
+        </trim>
+        where pi_id = #{piId}
+    </update>
+
+    <delete id="deleteTecpiByPiid" parameterType="Long">
+        delete from tec_pi where pi_id = #{piId}
+    </delete>
+
+    <delete id="deleteTecpiByPiids" parameterType="String">
+        delete from tec_pi where pi_id in
+        <foreach item="piId" collection="array" open="(" separator="," close=")">
+            #{piId}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jb.property.mapper.ProjectUserPropertyMapper">
+
+    <resultMap type="ProjectUserProperty" id="ProjectUserPropertyResult">
+        <result property="userId"    column="user_id"    />
+        <result property="propertyId"    column="property_id"    />
+        <result property="userNickName"    column="user_nick_name"    />
+    </resultMap>
+
+    <sql id="selectProjectUserPropertyVo">
+        select project_user_property.user_id user_id, project_user_property.property_id property_id, project_user_property.user_nick_name user_nick_name from project_user_property
+
+    </sql>
+
+    <select id="selectProjectUserPropertyList" parameterType="ProjectUserProperty" resultMap="ProjectUserPropertyResult">
+        <include refid="selectProjectUserPropertyVo"/>
+        <where>
+            <if test="userNickName != null  and userNickName != ''"> and user_nick_name like concat('%', #{userNickName}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectPropertyWorkerList" parameterType="Long" resultMap="ProjectUserPropertyResult">
+        <include refid="selectProjectUserPropertyVo"/>
+        where property_id  = #{propertyId}
+    </select>
+
+    <select id="selectProjectUserPropertyByUserId" parameterType="Long" resultMap="ProjectUserPropertyResult">
+        <include refid="selectProjectUserPropertyVo"/>
+        where user_id = #{userId}
+    </select>
+
+    <insert id="insertProjectUserProperty" parameterType="ProjectUserProperty">
+        insert into project_user_property
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="propertyId != null">property_id,</if>
+            <if test="userNickName != null">user_nick_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="propertyId != null">#{propertyId},</if>
+            <if test="userNickName != null">#{userNickName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProjectUserProperty" parameterType="ProjectUserProperty">
+        update project_user_property
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="propertyId != null">property_id = #{propertyId},</if>
+            <if test="userNickName != null">user_nick_name = #{userNickName},</if>
+        </trim>
+        where user_id = #{userId}
+    </update>
+
+    <delete id="deleteProjectUserPropertyByUserId" parameterType="Long">
+        delete from project_user_property where user_id = #{userId}
+    </delete>
+
+    <delete id="deleteProjectUserPropertyByUserIds" parameterType="String">
+        delete from project_user_property where user_id in
+        <foreach item="userId" collection="array" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+</mapper>

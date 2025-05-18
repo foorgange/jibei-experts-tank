@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jb.property.mapper.PropertyTypeMapper">
+
+    <resultMap type="PropertyType" id="PropertyTypeResult">
+        <result property="propertyTypeId"    column="property_type_id"    />
+        <result property="propertyTypeName"    column="property_type_name"    />
+    </resultMap>
+
+    <sql id="selectPropertyTypeVo">
+        select property_type.property_type_id property_type_id, property_type.property_type_name property_type_name from property_type
+
+    </sql>
+
+    <select id="selectPropertyTypeList" parameterType="PropertyType" resultMap="PropertyTypeResult">
+        <include refid="selectPropertyTypeVo"/>
+        <where>
+            <if test="propertyTypeName != null  and propertyTypeName != ''"> and property_type_name like concat('%', #{propertyTypeName}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectPropertyTypeByPropertyTypeId" parameterType="Long" resultMap="PropertyTypeResult">
+        <include refid="selectPropertyTypeVo"/>
+        where property_type_id = #{propertyTypeId}
+    </select>
+
+    <insert id="insertPropertyType" parameterType="PropertyType">
+        insert into property_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="propertyTypeId != null">property_type_id,</if>
+            <if test="propertyTypeName != null">property_type_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="propertyTypeId != null">#{propertyTypeId},</if>
+            <if test="propertyTypeName != null">#{propertyTypeName},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePropertyType" parameterType="PropertyType">
+        update property_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="propertyTypeName != null">property_type_name = #{propertyTypeName},</if>
+        </trim>
+        where property_type_id = #{propertyTypeId}
+    </update>
+
+    <delete id="deletePropertyTypeByPropertyTypeId" parameterType="Long">
+        delete from property_type where property_type_id = #{propertyTypeId}
+    </delete>
+
+    <delete id="deletePropertyTypeByPropertyTypeIds" parameterType="String">
+        delete from property_type where property_type_id in
+        <foreach item="propertyTypeId" collection="array" open="(" separator="," close=")">
+            #{propertyTypeId}
+        </foreach>
+    </delete>
+</mapper>

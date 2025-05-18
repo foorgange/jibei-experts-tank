@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jb.property.mapper.PropertyAttachFileMapper">
+
+    <resultMap type="PropertyAttachFile" id="PropertyAttachFileResult">
+        <result property="fileId"    column="file_id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="filePath"    column="file_path"    />
+        <result property="propertyId"    column="property_id"    />
+    </resultMap>
+
+    <sql id="selectPropertyAttachFileVo">
+        select property_attach_file.file_id file_id, property_attach_file.file_name file_name, property_attach_file.file_path file_path, property_attach_file.property_id property_id from property_attach_file
+
+    </sql>
+
+    <select id="selectPropertyAttachFileList" parameterType="PropertyAttachFile" resultMap="PropertyAttachFileResult">
+        <include refid="selectPropertyAttachFileVo"/>
+        <where>
+            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
+            <if test="propertyId != null "> and property_attach_file.property_id = #{propertyId}</if>
+        </where>
+    </select>
+
+    <select id="selectPropertyAttachFileByFileId" parameterType="Long" resultMap="PropertyAttachFileResult">
+        <include refid="selectPropertyAttachFileVo"/>
+        where file_id = #{fileId}
+    </select>
+
+    <insert id="insertPropertyAttachFile" parameterType="PropertyAttachFile">
+        insert into property_attach_file
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fileId != null">file_id,</if>
+            <if test="fileName != null">file_name,</if>
+            <if test="filePath != null">file_path,</if>
+            <if test="propertyId != null">property_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fileId != null">#{fileId},</if>
+            <if test="fileName != null">#{fileName},</if>
+            <if test="filePath != null">#{filePath},</if>
+            <if test="propertyId != null">#{propertyId},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePropertyAttachFile" parameterType="PropertyAttachFile">
+        update property_attach_file
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fileName != null">file_name = #{fileName},</if>
+            <if test="filePath != null">file_path = #{filePath},</if>
+            <if test="propertyId != null">property_id = #{propertyId},</if>
+        </trim>
+        where file_id = #{fileId}
+    </update>
+
+    <delete id="deletePropertyAttachFileByFileId" parameterType="Long">
+        delete from property_attach_file where file_id = #{fileId}
+    </delete>
+
+    <delete id="deletePropertyAttachFileByFileIds" parameterType="String">
+        delete from property_attach_file where file_id in
+        <foreach item="fileId" collection="array" open="(" separator="," close=")">
+            #{fileId}
+        </foreach>
+    </delete>
+</mapper>

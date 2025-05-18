@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jb.property.mapper.ProjectPropertyMapper">
+
+    <resultMap type="ProjectProperty" id="ProjectPropertyResult">
+        <result property="propertyId"    column="property_id"    />
+        <result property="propertyName"    column="property_name"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="propertyType"    column="property_type"    />
+        <result property="publisher"    column="publisher"    />
+        <result property="periodical"    column="periodical"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="finishTime"    column="finish_time"    />
+        <result property="fareStatus"    column="fare_status"    />
+        <result property="auth"    column="auth"    />
+    </resultMap>
+
+    <sql id="selectProjectPropertyVo">
+        select project_property.property_id property_id, project_property.property_name property_name, project_property.project_name project_name, project_property.property_type property_type, project_property.publisher publisher, project_property.periodical periodical, project_property.create_time create_time, project_property.finish_time finish_time, project_property.fare_status fare_status, project_property.auth auth from project_property
+
+    </sql>
+
+    <select id="selectProjectPropertyList" parameterType="ProjectProperty" resultMap="ProjectPropertyResult">
+        <include refid="selectProjectPropertyVo"/>
+        <where>
+            <if test="propertyName != null  and propertyName != ''"> and property_name like concat('%', #{propertyName}, '%')</if>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            <if test="propertyType != null "> and project_property.property_type = #{propertyType}</if>
+            <if test="publisher != null  and publisher != ''"> and project_property.publisher = #{publisher}</if>
+            <if test="periodical != null  and periodical != ''"> and project_property.periodical = #{periodical}</if>
+            <if test="finishTime != null "> and project_property.finish_time = #{finishTime}</if>
+            <if test="fareStatus != null  and fareStatus != ''"> and project_property.fare_status = #{fareStatus}</if>
+            <if test="auth != null  and auth != ''"> and project_property.auth = #{auth}</if>
+        </where>
+    </select>
+
+    <select id="selectProjectPropertyByPropertyId" parameterType="Long" resultMap="ProjectPropertyResult">
+        <include refid="selectProjectPropertyVo"/>
+        where property_id = #{propertyId}
+    </select>
+
+    <insert id="insertProjectProperty" parameterType="ProjectProperty" useGeneratedKeys="true" keyProperty="propertyId">
+        insert into project_property
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="propertyName != null">property_name,</if>
+            <if test="projectName != null">project_name,</if>
+            <if test="propertyType != null">property_type,</if>
+            <if test="publisher != null">publisher,</if>
+            <if test="periodical != null">periodical,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="finishTime != null">finish_time,</if>
+            <if test="fareStatus != null">fare_status,</if>
+            <if test="auth != null">auth,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="propertyName != null">#{propertyName},</if>
+            <if test="projectName != null">#{projectName},</if>
+            <if test="propertyType != null">#{propertyType},</if>
+            <if test="publisher != null">#{publisher},</if>
+            <if test="periodical != null">#{periodical},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="finishTime != null">#{finishTime},</if>
+            <if test="fareStatus != null">#{fareStatus},</if>
+            <if test="auth != null">#{auth},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProjectProperty" parameterType="ProjectProperty">
+        update project_property
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="propertyName != null">property_name = #{propertyName},</if>
+            <if test="projectName != null">project_name = #{projectName},</if>
+            <if test="propertyType != null">property_type = #{propertyType},</if>
+            <if test="publisher != null">publisher = #{publisher},</if>
+            <if test="periodical != null">periodical = #{periodical},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="finishTime != null">finish_time = #{finishTime},</if>
+            <if test="fareStatus != null">fare_status = #{fareStatus},</if>
+            <if test="auth != null">auth = #{auth},</if>
+        </trim>
+        where property_id = #{propertyId}
+    </update>
+
+
+    <delete id="deleteProjectPropertyByPropertyId" parameterType="Long">
+        delete from project_property where property_id = #{propertyId}
+    </delete>
+
+    <delete id="deleteProjectPropertyByPropertyIds" parameterType="String">
+        delete from project_property where property_id in
+        <foreach item="propertyId" collection="array" open="(" separator="," close=")">
+            #{propertyId}
+        </foreach>
+    </delete>
+
+    <select id="getPropertyIdByName" resultType="long">
+        select property_id from project_property
+        where property_name = #{property_name}
+    </select>
+
+    <insert id="insertUserProjectProperty" parameterType="ProjectUserProperty">
+        insert into project_user_property
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="propertyId != null">property_id,</if>
+            <if test="userNickName != null">user_nick_name,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="propertyId != null">#{propertyId},</if>
+            <if test="userNickName != null">#{userNickName},</if>
+
+        </trim>
+    </insert>
+
+    <select id="selectPropertyWorkerList" parameterType="Long" resultType="java.lang.String">
+        select user_id, user_nick_name from project_user_property
+        where property_id = #{propertyId}
+    </select>
+
+    <update id="updateFareStatus">
+        update project_property set fare_status = '1'
+    </update>
+
+</mapper>

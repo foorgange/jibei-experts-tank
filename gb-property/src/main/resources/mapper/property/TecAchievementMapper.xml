@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jb.property.mapper.TecAchievementMapperOld">
+
+    <resultMap type="com.jb.property.domain.TecAchievementOld" id="TecAchievementResult">
+        <result property="achievementId"    column="achievement_id"/>
+        <result property="achievementName"    column="achievement_name"/>
+        <result property="college"    column="college"/>
+        <result property="field"    column="field"/>
+        <result property="category"    column="category"/>
+        <result property="contactName"    column="contactName"/>
+        <result property="phoneNumber"    column="phoneNumber"/>
+        <result property="email"    column="email"/>
+        <result property="cooperationMethods"    column="cooperationMethods"/>
+        <result property="attachFileName"    column="attachFileName"/>
+        <result property="registrationDate"    column="registrationDate"/>
+        <result property="archiveDate"    column="archiveDate"/>
+        <result property="pageNumber"    column="pageNumber"/>
+    </resultMap>
+
+    <sql id="selectTecAchievementVo">
+        select tec_achievement.achievement_id achievement_id, tec_achievement.achievement_name achievement_name, tec_achievement.college college, tec_achievement.field field, tec_achievement.category category,
+               tec_achievement.contactName contactName, tec_achievement.phoneNumber phoneNumber,tec_achievement.contactName2 contactName2, tec_achievement.phoneNumber2 phoneNumber2, tec_achievement.email email, tec_achievement.cooperationMethods cooperationMethods,
+               tec_achievement.cooperationMethods cooperationMethods, tec_achievement.attachFileName attachFileName, tec_achievement.registrationDate registrationDate,
+               tec_achievement.archiveDate archiveDate, tec_achievement.pageNumber pageNumber from tec_achievement
+    </sql>
+
+    <select id="selectTecAchievementById" parameterType="integer" resultMap="TecAchievementResult">
+        <include refid="selectTecAchievementVo"/>
+        <where>
+            achievement_id = #{achievementId}
+        </where>
+    </select>
+
+    <select id="selectTecAchievementList" parameterType="com.jb.property.domain.TecAchievementOld" resultMap="TecAchievementResult">
+        <include refid="selectTecAchievementVo"/>
+        <where>
+            <if test="achievementId != null  and achievementId != ''"> and achievement_id = #{achievementId}</if>
+            <if test="achievementName != null  and achievementName != ''"> and achievement_name like concat('%', #{achievementName}, '%')</if>
+            <if test="college != null  and college != ''"> and college = #{college}</if>
+            <if test="field != null  and field != ''"> and field like concat('%', #{field}, '%')</if>
+            <if test="cooperationMethods != null  and cooperationMethods != ''"> and cooperationMethods like concat('%', #{cooperationMethods}, '%')</if>
+            <if test="attachFileName != null  and attachFileName != ''"> and attachFileName like concat('%', #{attachFileName}, '%')</if>
+            <if test="pageNumber != null  and pageNumber != ''"> and pageNumber = #{pageNumber}</if>
+            <if test="category != null  and category != ''"> and category = #{category}</if>
+            <if test="contactName != null  and contactName != ''"> and contactName like concat('%', #{contactName}, '%')</if>
+            <if test="contactName2 != null  and contactName2 != ''"> and contactName2 like concat('%', #{contactName2}, '%')</if>
+        </where>
+    </select>
+
+    <delete id="delTecAchievementById" parameterType="integer">
+        delete from tec_achievement where achievement_id = #{achievementId}
+    </delete>
+
+    <insert id="addTecAchievement" parameterType="com.jb.property.domain.TecAchievementOld" useGeneratedKeys="true" keyProperty="achievementId">
+        insert into tec_achievement
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="achievementId != null">achievement_id,</if>
+            <if test="achievementName != null">achievement_name,</if>
+            <if test="college != null">college,</if>
+            <if test="college != null">field,</if>
+            <if test="college != null">category,</if>
+            <if test="college != null">contactName,</if>
+            <if test="college != null">phoneNumber,</if>
+            <if test="college != null">contactName2,</if>
+            <if test="college != null">phoneNumber2,</if>
+            <if test="college != null">email,</if>
+            <if test="college != null">cooperationMethods,</if>
+            <if test="college != null">attachFileName,</if>
+            <if test="college != null">registrationDate,</if>
+            <if test="college != null">archiveDate,</if>
+            <if test="college != null">pageNumber,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="achievementId != null">#{achievementId},</if>
+            <if test="achievementName != null">#{achievementName},</if>
+            <if test="college != null">#{college},</if>
+            <if test="field != null">#{field},</if>
+            <if test="category != null">#{category},</if>
+            <if test="contactName != null">#{contactName},</if>
+            <if test="phoneNumber != null">#{phoneNumber},</if>
+            <if test="contactName2 != null">#{contactName2},</if>
+            <if test="phoneNumber2 != null">#{phoneNumber2},</if>
+            <if test="email != null">#{email},</if>
+            <if test="cooperationMethods != null">#{cooperationMethods},</if>
+            <if test="attachFileName != null">#{attachFileName},</if>
+            <if test="registrationDate != null">#{registrationDate},</if>
+            <if test="archiveDate != null">#{archiveDate},</if>
+            <if test="pageNumber != null">#{pageNumber},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTecAchievement">
+        update tec_achievement
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="achievementName != null">achievement_name = #{achievementName},</if>
+            <if test="college != null">college = #{college},</if>
+            <if test="field != null">field = #{field},</if>
+            <if test="category != null">category = #{category},</if>
+            <if test="contactName != null">contactName = #{contactName},</if>
+            <if test="phoneNumber != null">phoneNumber = #{phoneNumber},</if>
+            <if test="contactName2 != null">contactName2 = #{contactName2},</if>
+            <if test="phoneNumber2 != null">phoneNumber2 = #{phoneNumber2},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="cooperationMethods != null">cooperationMethods = #{cooperationMethods},</if>
+            <if test="attachFileName != null">attachFileName = #{attachFileName},</if>
+            <if test="registrationDate != null">registrationDate = #{registrationDate},</if>
+            <if test="archiveDate != null">archiveDate = #{archiveDate},</if>
+            <if test="pageNumber != null">pageNumber = #{pageNumber},</if>
+        </trim>
+        where achievement_id = #{achievementId}
+    </update>
+
+</mapper>

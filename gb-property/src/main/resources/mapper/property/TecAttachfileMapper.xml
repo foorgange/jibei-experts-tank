@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jb.property.mapper.TecAttachfileMapper">
+
+    <resultMap type="com.jb.property.domain.TecAttachfile" id="TecAttachfileResult">
+        <result property="fileId"    column="file_id"    />
+        <result property="achievementId"    column="achievement_id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="filePath"    column="file_path"    />
+    </resultMap>
+
+    <sql id="selectTecAttachfileVo">
+        select tec_attachfile.file_id file_id, tec_attachfile.achievement_id achievement_id, tec_attachfile.file_name file_name, tec_attachfile.file_path file_path
+        from tec_attachfile
+    </sql>
+
+    <select id="selectTecAttachfileList" parameterType="com.jb.property.domain.TecAttachfile" resultMap="TecAttachfileResult">
+        <include refid="selectTecAttachfileVo"/>
+        <where>
+            <if test="fileId != null "> and tec_attachfile.file_id = #{fileId}</if>
+            <if test="achievementId != null "> and tec_attachfile.achievement_id = #{achievementId}</if>
+            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
+            <if test="filePath != null  and filePath != ''"> and tec_attachfile.file_path = #{filePath}</if>
+        </where>
+    </select>
+
+    <select id="selectTecAttachfileByFileId" parameterType="Integer" resultMap="TecAttachfileResult">
+        <include refid="selectTecAttachfileVo"/>
+        where file_id = #{fileId}
+    </select>
+
+    <insert id="insertTecAttachfile" parameterType="com.jb.property.domain.TecAttachfile" useGeneratedKeys="true" keyProperty="fileId">
+        insert into tec_attachfile
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="achievementId != null">achievement_id,</if>
+            <if test="fileName != null">file_name,</if>
+            <if test="filePath != null">file_path,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="achievementId != null">#{achievementId},</if>
+            <if test="fileName != null">#{fileName},</if>
+            <if test="filePath != null">#{filePath},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTecAttachfile" parameterType="com.jb.property.domain.TecAttachfile">
+        update tec_attachfile
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="achievementId != null">achievement_id = #{achievementId},</if>
+            <if test="fileName != null">file_name = #{fileName},</if>
+            <if test="filePath != null">file_path = #{filePath},</if>
+        </trim>
+        where file_id = #{fileId}
+    </update>
+
+    <delete id="deleteTecAttachfileByFileId" parameterType="Integer">
+        delete from tec_attachfile where file_id = #{fileId}
+    </delete>
+
+    <delete id="deleteTecAttachfileByFileIds" parameterType="String">
+        delete from tec_attachfile where file_id in
+        <foreach item="fileId" collection="array" open="(" separator="," close=")">
+            #{fileId}
+        </foreach>
+    </delete>
+</mapper>

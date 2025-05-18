@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jb.expert.mapper.ExpertClassMapper">
+
+    <resultMap type="ExpertClass" id="ExpertClassResult">
+        <result property="classId"    column="class_id"    />
+        <result property="className"    column="class_name"    />
+    </resultMap>
+
+    <sql id="selectExpertClassVo">
+        select expert_class.class_id class_id, expert_class.class_name class_name from expert_class
+
+    </sql>
+
+    <select id="selectExpertClassList" parameterType="ExpertClass" resultMap="ExpertClassResult">
+        <include refid="selectExpertClassVo"/>
+        <where>
+            <if test="className != null  and className != ''"> and class_name like concat('%', #{className}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectExpertClassByClassId" parameterType="Long" resultMap="ExpertClassResult">
+        <include refid="selectExpertClassVo"/>
+        where class_id = #{classId}
+    </select>
+
+    <insert id="insertExpertClass" parameterType="ExpertClass" useGeneratedKeys="true" keyProperty="classId">
+        insert into expert_class
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="className != null">class_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="className != null">#{className},</if>
+         </trim>
+    </insert>
+
+    <update id="updateExpertClass" parameterType="ExpertClass">
+        update expert_class
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="className != null">class_name = #{className},</if>
+        </trim>
+        where class_id = #{classId}
+    </update>
+
+    <delete id="deleteExpertClassByClassId" parameterType="Long">
+        delete from expert_class where class_id = #{classId}
+    </delete>
+
+    <delete id="deleteExpertClassByClassIds" parameterType="String">
+        delete from expert_class where class_id in
+        <foreach item="classId" collection="array" open="(" separator="," close=")">
+            #{classId}
+        </foreach>
+    </delete>
+</mapper>

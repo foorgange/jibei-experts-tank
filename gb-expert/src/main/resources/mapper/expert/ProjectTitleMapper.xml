@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jb.expert.mapper.ProjectTitleMapper">
+
+    <resultMap type="ProjectTitle" id="ProjectTitleResult">
+        <result property="titleId"    column="title_id"    />
+        <result property="titleName"    column="title_name"    />
+    </resultMap>
+
+    <sql id="selectProjectTitleVo">
+        select project_title.title_id title_id, project_title.title_name title_name from project_title
+
+    </sql>
+
+    <select id="selectProjectTitleList" parameterType="ProjectTitle" resultMap="ProjectTitleResult">
+        <include refid="selectProjectTitleVo"/>
+        <where>
+            <if test="titleName != null  and titleName != ''"> and title_name like concat('%', #{titleName}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectProjectTitleByTitleId" parameterType="Long" resultMap="ProjectTitleResult">
+        <include refid="selectProjectTitleVo"/>
+        where title_id = #{titleId}
+    </select>
+
+    <insert id="insertProjectTitle" parameterType="ProjectTitle" useGeneratedKeys="true" keyProperty="titleId">
+        insert into project_title
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="titleName != null">title_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="titleName != null">#{titleName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProjectTitle" parameterType="ProjectTitle">
+        update project_title
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="titleName != null">title_name = #{titleName},</if>
+        </trim>
+        where title_id = #{titleId}
+    </update>
+
+    <delete id="deleteProjectTitleByTitleId" parameterType="Long">
+        delete from project_title where title_id = #{titleId}
+    </delete>
+
+    <delete id="deleteProjectTitleByTitleIds" parameterType="String">
+        delete from project_title where title_id in
+        <foreach item="titleId" collection="array" open="(" separator="," close=")">
+            #{titleId}
+        </foreach>
+    </delete>
+</mapper>

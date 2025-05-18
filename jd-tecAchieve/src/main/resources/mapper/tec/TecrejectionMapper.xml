@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jd.tecachieve.mapper.TecrejectionMapper">
+    
+    <resultMap type="Tecrejection" id="TecrejectionResult">
+        <result property="rejectionId"    column="rejection_id"    />
+        <result property="achievementId"    column="achievementId"    />
+        <result property="rejectionInfo"    column="rejection_info"    />
+        <result property="rejectionDate"    column="rejection_date"    />
+    </resultMap>
+
+    <sql id="selectTecrejectionVo">
+        select rejection_id, achievementId, rejection_info, rejection_date from tec_rejection
+    </sql>
+
+    <select id="selectTecrejectionList" parameterType="Tecrejection" resultMap="TecrejectionResult">
+        <include refid="selectTecrejectionVo"/>
+        <where>  
+            <if test="achievementId != null "> and achievementId = #{achievementId}</if>
+            <if test="rejectionInfo != null  and rejectionInfo != ''"> and rejection_info = #{rejectionInfo}</if>
+            <if test="rejectionDate != null "> and rejection_date = #{rejectionDate}</if>
+        </where>
+    </select>
+    <!--查询驳回信息列表-->
+    <select id="getListByachievementId" parameterType="Long" resultMap="TecrejectionResult">
+        <include refid="selectTecrejectionVo"/>
+        where achievementId = #{achievementId}
+    </select>
+    <select id="selectTecrejectionByRejectionId" parameterType="Long" resultMap="TecrejectionResult">
+        <include refid="selectTecrejectionVo"/>
+        where rejection_id = #{rejectionId}
+    </select>
+        
+    <insert id="insertTecrejection" parameterType="Tecrejection" useGeneratedKeys="true" keyProperty="rejectionId">
+        insert into tec_rejection
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="achievementId != null">achievementId,</if>
+            <if test="rejectionInfo != null">rejection_info,</if>
+            <if test="rejectionDate != null">rejection_date,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="achievementId != null">#{achievementId},</if>
+            <if test="rejectionInfo != null">#{rejectionInfo},</if>
+            <if test="rejectionDate != null">#{rejectionDate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTecrejection" parameterType="Tecrejection">
+        update tec_rejection
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="achievementId != null">achievementId = #{achievementId},</if>
+            <if test="rejectionInfo != null">rejection_info = #{rejectionInfo},</if>
+            <if test="rejectionDate != null">rejection_date = #{rejectionDate},</if>
+        </trim>
+        where rejection_id = #{rejectionId}
+    </update>
+
+    <delete id="deleteTecrejectionByRejectionId" parameterType="Long">
+        delete from tec_rejection where rejection_id = #{rejectionId}
+    </delete>
+
+    <delete id="deleteTecrejectionByRejectionIds" parameterType="String">
+        delete from tec_rejection where rejection_id in
+        <foreach item="rejectionId" collection="array" open="(" separator="," close=")">
+            #{rejectionId}
+        </foreach>
+    </delete>
+</mapper>

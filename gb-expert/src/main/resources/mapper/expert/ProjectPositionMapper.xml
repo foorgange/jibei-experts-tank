@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jb.expert.mapper.ProjectPositionMapper">
+
+    <resultMap type="ProjectPosition" id="ProjectPositionResult">
+        <result property="positionId"    column="position_id"    />
+        <result property="positionName"    column="position_name"    />
+    </resultMap>
+
+    <sql id="selectProjectPositionVo">
+        select project_position.position_id position_id, project_position.position_name position_name from project_position
+
+    </sql>
+
+    <select id="selectProjectPositionList" parameterType="ProjectPosition" resultMap="ProjectPositionResult">
+        <include refid="selectProjectPositionVo"/>
+        <where>
+            <if test="positionName != null  and positionName != ''"> and position_name like concat('%', #{positionName}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectProjectPositionByPositionId" parameterType="Long" resultMap="ProjectPositionResult">
+        <include refid="selectProjectPositionVo"/>
+        where position_id = #{positionId}
+    </select>
+
+    <insert id="insertProjectPosition" parameterType="ProjectPosition" useGeneratedKeys="true" keyProperty="positionId">
+        insert into project_position
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="positionName != null">position_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="positionName != null">#{positionName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProjectPosition" parameterType="ProjectPosition">
+        update project_position
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="positionName != null">position_name = #{positionName},</if>
+        </trim>
+        where position_id = #{positionId}
+    </update>
+
+    <delete id="deleteProjectPositionByPositionId" parameterType="Long">
+        delete from project_position where position_id = #{positionId}
+    </delete>
+
+    <delete id="deleteProjectPositionByPositionIds" parameterType="String">
+        delete from project_position where position_id in
+        <foreach item="positionId" collection="array" open="(" separator="," close=")">
+            #{positionId}
+        </foreach>
+    </delete>
+</mapper>

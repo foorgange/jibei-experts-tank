@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jb.project.mapper.ProjectBookTaskMapper">
+
+    <resultMap type="ProjectBookTask" id="ProjectBookTaskResult">
+        <result property="bookTaskId"    column="book_task_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="bookName"    column="book_name"    />
+        <result property="bookPath"    column="book_path"    />
+        <result property="taskId"    column="task_id"    />
+    </resultMap>
+
+    <sql id="selectProjectBookTaskVo">
+        select project_book_task.book_task_id book_task_id, project_book_task.user_id user_id, project_book_task.book_name book_name, project_book_task.book_path book_path, project_book_task.task_id task_id from project_book_task
+
+    </sql>
+
+    <select id="selectProjectBookTaskList" parameterType="ProjectBookTask" resultMap="ProjectBookTaskResult">
+        <include refid="selectProjectBookTaskVo"/>
+        <where>
+            <if test="userId != null "> and project_book_task.user_id = #{userId}</if>
+            <if test="bookName != null  and bookName != ''"> and book_name like concat('%', #{bookName}, '%')</if>
+            <if test="bookPath != null  and bookPath != ''"> and project_book_task.book_path = #{bookPath}</if>
+            <if test="taskId != null "> and project_book_task.task_id = #{taskId}</if>
+        </where>
+    </select>
+
+    <select id="selectProjectBookTaskByBookTaskId" parameterType="Long" resultMap="ProjectBookTaskResult">
+        <include refid="selectProjectBookTaskVo"/>
+        where book_task_id = #{bookTaskId}
+    </select>
+
+    <insert id="insertProjectBookTask" parameterType="ProjectBookTask" useGeneratedKeys="true" keyProperty="bookTaskId">
+        insert into project_book_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="bookName != null">book_name,</if>
+            <if test="bookPath != null">book_path,</if>
+            <if test="taskId != null">task_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="bookName != null">#{bookName},</if>
+            <if test="bookPath != null">#{bookPath},</if>
+            <if test="taskId != null">#{taskId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProjectBookTask" parameterType="ProjectBookTask">
+        update project_book_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="bookName != null">book_name = #{bookName},</if>
+            <if test="bookPath != null">book_path = #{bookPath},</if>
+            <if test="taskId != null">task_id = #{taskId},</if>
+        </trim>
+        where book_task_id = #{bookTaskId}
+    </update>
+
+    <delete id="deleteProjectBookTaskByBookTaskId" parameterType="Long">
+        delete from project_book_task where book_task_id = #{bookTaskId}
+    </delete>
+
+    <delete id="deleteProjectBookTaskByBookTaskIds" parameterType="String">
+        delete from project_book_task where book_task_id in
+        <foreach item="bookTaskId" collection="array" open="(" separator="," close=")">
+            #{bookTaskId}
+        </foreach>
+    </delete>
+</mapper>

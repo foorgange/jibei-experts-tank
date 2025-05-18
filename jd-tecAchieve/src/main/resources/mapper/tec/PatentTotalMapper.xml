@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jd.tecachieve.mapper.PatentTotalMapper">
+
+    <!-- 定义resultMap -->
+    <resultMap id="map" type="map">
+        <!-- 自动映射所有字段到Map -->
+    </resultMap>
+
+    <!-- 查询所有专利统计数据 -->
+    <select id="findAll" resultType="map">
+        SELECT * FROM patent_total
+    </select>
+
+    <select id="getTotalCounts" resultType="map">
+        SELECT
+            SUM(transfers) AS totalTransfers,
+            SUM(licenses) AS totalLicenses,
+            SUM(pledges) AS totalPledges
+        FROM patent_total
+    </select>
+
+    <!-- 新增查询，用于获取grade_a到grade_e的总数 -->
+    <select id="getGradesTotal" resultType="map">
+        SELECT
+            SUM(grade_a) AS total_grade_a,
+            SUM(grade_b) AS total_grade_b,
+            SUM(grade_c) AS total_grade_c,
+            SUM(grade_d) AS total_grade_d,
+            SUM(grade_e) AS total_grade_e
+        FROM
+            patent_total
+    </select>
+
+
+</mapper>

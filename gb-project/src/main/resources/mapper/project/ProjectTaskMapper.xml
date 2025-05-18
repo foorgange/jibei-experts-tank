@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jb.project.mapper.ProjectTaskMapper">
+
+    <resultMap type="ProjectTask" id="ProjectTaskResult">
+        <result property="taskId"    column="task_id"    />
+        <result property="taskName"    column="task_name"    />
+        <result property="taskType"    column="task_type"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="finishTime"    column="finish_time"    />
+        <result property="taskInfo"    column="task_info"    />
+        <result property="projectId"    column="project_id"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="taskStatus"    column="task_status"    />
+        <result property="templateId"    column="template_id"    />
+        <result property="templatePath"    column="template_path"    />
+        <result property="userId"    column="user_id"    />
+    </resultMap>
+
+    <sql id="selectProjectTaskVo">
+        select project_task.task_id task_id,
+               project_task.task_name task_name,
+               project_task.task_type task_type,
+               project_task.create_time create_time,
+               project_task.finish_time finish_time,
+               project_task.task_info task_info,
+               project_task.project_id project_id,
+               project_task.task_status task_status,
+               project_task.template_id template_id,
+               project_task.template_path template_path,
+               project_task.user_id user_id from project_task
+    </sql>
+    <sql id="selectProjectTaskWithProjectNameVo">
+        select project_task.task_id task_id,
+               project_task.task_name task_name,
+               project_task.task_type task_type,
+               project_task.create_time create_time,
+               project_task.finish_time finish_time,
+               project_task.task_info task_info,
+               project_task.project_id project_id,
+               project.project_name project_name,
+               project_task.task_status task_status,
+               project_task.template_id template_id,
+               project_task.template_path template_path,
+               project_task.user_id user_id from project_task
+        left join project on project.project_id = project_task.project_id
+    </sql>
+    <select id="selectProjectTaskList" parameterType="ProjectTask" resultMap="ProjectTaskResult">
+        <include refid="selectProjectTaskWithProjectNameVo"/>
+        <where>
+            <if test="taskName != null  and taskName != ''"> and task_name like concat('%', #{taskName}, '%')</if>
+            <if test="taskType != null "> and project_task.task_type = #{taskType}</if>
+            <if test="finishTime != null "> and project_task.finish_time = #{finishTime}</if>
+            <if test="taskInfo != null  and taskInfo != ''"> and project_task.task_info = #{taskInfo}</if>
+            <if test="projectId != null "> and project_task.project_id = #{projectId}</if>
+            <if test="taskStatus != null "> and project_task.task_status = #{taskStatus}</if>
+            <if test="templateId != null "> and project_task.template_id = #{templateId}</if>
+            <if test="userId != null "> and project_task.user_id = #{userId}</if>
+        </where>
+    </select>
+
+    <select id="selectProjectTaskByTaskId" parameterType="Long" resultMap="ProjectTaskResult">
+        <include refid="selectProjectTaskWithProjectNameVo"/>
+        where task_id = #{taskId}
+    </select>
+
+    <insert id="insertProjectTask" parameterType="ProjectTask" useGeneratedKeys="true" keyProperty="taskId">
+        insert into project_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="taskName != null">task_name,</if>
+            <if test="taskType != null">task_type,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="finishTime != null">finish_time,</if>
+            <if test="taskInfo != null">task_info,</if>
+            <if test="projectId != null">project_id,</if>
+            <if test="taskStatus != null">task_status,</if>
+            <if test="templateId != null">template_id,</if>
+            <if test="templatePath != null">template_path,</if>
+            <if test="userId != null">user_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="taskName != null">#{taskName},</if>
+            <if test="taskType != null">#{taskType},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="finishTime != null">#{finishTime},</if>
+            <if test="taskInfo != null">#{taskInfo},</if>
+            <if test="projectId != null">#{projectId},</if>
+            <if test="taskStatus != null">#{taskStatus},</if>
+            <if test="templateId != null">#{templateId},</if>
+            <if test="templatePath != null">#{templatePath},</if>
+            <if test="userId != null">#{userId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProjectTask" parameterType="ProjectTask">
+        update project_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskName != null">task_name = #{taskName},</if>
+            <if test="taskType != null">task_type = #{taskType},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="finishTime != null">finish_time = #{finishTime},</if>
+            <if test="taskInfo != null">task_info = #{taskInfo},</if>
+            <if test="projectId != null">project_id = #{projectId},</if>
+            <if test="taskStatus != null">task_status = #{taskStatus},</if>
+            <if test="templateId != null">template_id = #{templateId},</if>
+            <if test="templatePath != null">template_path = #{templatePath},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+        </trim>
+        where task_id = #{taskId}
+    </update>
+
+    <delete id="deleteProjectTaskByTaskId" parameterType="Long">
+        delete from project_task where task_id = #{taskId}
+    </delete>
+
+    <delete id="deleteProjectTaskByTaskIds" parameterType="String">
+        delete from project_task where task_id in
+        <foreach item="taskId" collection="array" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+    </delete>
+
+    <select id="getProjectIdByExpertId" parameterType="Long" resultType="java.lang.Long">
+        select project_id from project_expert_project
+        where user_id = #{userId}
+    </select>
+
+    <select id="getTaskTypeByProjectId" parameterType="Long" resultType="java.lang.Long">
+        select task_type from project_task
+        where project_id = #{projectId}
+    </select>
+
+    <update id="updateStatus3AndType1ById">
+        update project_expert_project set project_task_status = 3,task_type = 1
+        where user_id = #{userId} and project_id = #{projectId}
+    </update>
+
+    <select id="getTemplateIdByProjectId" parameterType="Long" resultType="java.lang.Long">
+        select template_id from project_task
+        where project_id = #{projectId}
+    </select>
+
+    <select id="getAllExpertIdByProjectId" parameterType="Long" resultType="java.lang.Long">
+        select user_id from project_expert_project
+        where project_id = #{projectId}
+    </select>
+
+    <select id="getExpertNameByExpertId" parameterType="Long" resultType="java.lang.String">
+        select nick_name from sys_user
+        where user_id = #{userId}
+    </select>
+
+    <update id="updateStatus1AndType0ById">
+        update project_expert_project set project_task_status = 1,task_type = 0
+        where user_id = #{userId} and project_id = #{projectId}
+    </update>
+
+    <update id="updateStatus1to2ById">
+        update project_task set task_status = 2
+        where project_id = #{projectId}
+    </update>
+
+    <select id="selectProjectStatusByProjectId" parameterType="Long" resultType="java.lang.Integer">
+        select task_status from project_task
+        where project_id = #{projectId}
+    </select>
+
+</mapper>

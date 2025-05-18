@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jb.project.mapper.ExpertTemplateMapper">
+
+    <resultMap type="ExpertTemplate" id="ExpertTemplateResult">
+        <result property="templateId"    column="template_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="templatePath"    column="template_path"    />
+        <result property="templateName"    column="template_name"    />
+    </resultMap>
+
+    <sql id="selectExpertTemplateVo">
+        select expert_template.template_id      template_id,
+               expert_template.user_id          user_id,
+               expert_template.template_path    template_path,
+               expert_template.template_name    template_name
+        from expert_template
+
+    </sql>
+
+    <select id="selectExpertTemplateList" parameterType="ExpertTemplate" resultMap="ExpertTemplateResult">
+        <include refid="selectExpertTemplateVo"/>
+        <where>
+            <if test="userId != null "> and expert_template.user_id = #{userId}</if>
+            <if test="templatePath != null  and templatePath != ''"> and expert_template.template_path = #{templatePath}</if>
+            <if test="templateName != null  and templateName != ''"> and template_name like concat('%', #{templateName}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectExpertTemplateByTemplateId" parameterType="Long" resultMap="ExpertTemplateResult">
+        <include refid="selectExpertTemplateVo"/>
+        where template_id = #{templateId}
+    </select>
+
+    <insert id="insertExpertTemplate" parameterType="ExpertTemplate">
+        insert into expert_template
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="templateId != null">template_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="templatePath != null">template_path,</if>
+            <if test="templateName != null">template_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="templateId != null">#{templateId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="templatePath != null">#{templatePath},</if>
+            <if test="templateName != null">#{templateName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateExpertTemplate" parameterType="ExpertTemplate">
+        update expert_template
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="templatePath != null">template_path = #{templatePath},</if>
+            <if test="templateName != null">template_name = #{templateName},</if>
+        </trim>
+        where template_id = #{templateId}
+    </update>
+
+    <delete id="deleteExpertTemplateByTemplateId" parameterType="Long">
+        delete from expert_template where template_id = #{templateId}
+    </delete>
+
+    <delete id="deleteExpertTemplateByTemplateIds" parameterType="String">
+        delete from expert_template where template_id in
+        <foreach item="templateId" collection="array" open="(" separator="," close=")">
+            #{templateId}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jb.expert.mapper.ProjectUserApplyMapper">
+
+    <resultMap type="ProjectUserApply" id="ProjectUserApplyResult">
+        <result property="applyId"    column="apply_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="examineUserId"    column="examine_user_id"    />
+        <result property="examineUserName"    column="examine_user_name"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="examineTime"    column="examine_time"    />
+        <result property="examineStatus"    column="examine_status"    />
+        <result property="examineRemark"    column="examine_remark"    />
+    </resultMap>
+
+    <sql id="selectProjectUserApplyVo">
+        select
+               project_user_apply.apply_id              apply_id,
+               project_user_apply.user_id               user_id,
+               project_user_apply.examine_user_id       examine_user_id,
+               sys_user.nick_name                       examine_user_name,
+               project_user_apply.create_time           create_time,
+               project_user_apply.examine_time          examine_time,
+               project_user_apply.examine_status        examine_status,
+               project_user_apply.examine_remark        examine_remark
+        from project_user_apply
+        left join sys_user on project_user_apply.examine_user_id = sys_user.user_id
+
+    </sql>
+
+    <select id="selectProjectUserApplyList" parameterType="ProjectUserApply" resultMap="ProjectUserApplyResult">
+        <include refid="selectProjectUserApplyVo"/>
+        <where>
+            <if test="userId != null "> and project_user_apply.user_id = #{userId}</if>
+            <if test="examineUserId != null "> and project_user_apply.examine_user_id = #{examineUserId}</if>
+            <if test="createTime != null "> and  DATEDIFF(project_user_apply.create_time,#{createTime}) = 0</if>
+
+            <if test="examineTime != null "> and DATEDIFF(project_user_apply.examine_time,#{examineTime}) = 0</if>
+
+            <if test="examineStatus != null "> and project_user_apply.examine_status = #{examineStatus}</if>
+            <if test="examineRemark != null  and examineRemark != ''"> and project_user_apply.examine_remark = #{examineRemark}</if>
+        </where>
+    </select>
+
+    <select id="selectProjectUserApplyByApplyId" parameterType="Long" resultMap="ProjectUserApplyResult">
+        <include refid="selectProjectUserApplyVo"/>
+        where apply_id = #{applyId}
+    </select>
+
+    <select id="selectMes" parameterType="String" resultMap="ProjectUserApplyResult">
+        select project_user_apply.apply_id apply_id, project_user_apply.user_id user_id,
+               project_user_apply.examine_user_id examine_user_id, project_user_apply.create_time create_time, project_user_apply.examine_time examine_time, project_user_apply.examine_status examine_status, project_user_apply.examine_remark examine_remark from project_user_apply
+        where user_id = #{name}
+        ORDER BY examine_time DESC
+        limit 0,1
+    </select>
+
+    <insert id="insertProjectUserApply" parameterType="ProjectUserApply" useGeneratedKeys="true" keyProperty="applyId">
+        insert into project_user_apply
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="examineUserId != null">examine_user_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="examineTime != null">examine_time,</if>
+            <if test="examineStatus != null">examine_status,</if>
+            <if test="examineRemark != null">examine_remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="examineUserId != null">#{examineUserId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="examineTime != null">#{examineTime},</if>
+            <if test="examineStatus != null">#{examineStatus},</if>
+            <if test="examineRemark != null">#{examineRemark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProjectUserApply" parameterType="ProjectUserApply">
+        update project_user_apply
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="examineUserId != null">examine_user_id = #{examineUserId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="examineTime != null">examine_time = #{examineTime},</if>
+            <if test="examineStatus != null">examine_status = #{examineStatus},</if>
+            <if test="examineRemark != null">examine_remark = #{examineRemark},</if>
+        </trim>
+        where apply_id = #{applyId}
+    </update>
+
+    <delete id="deleteProjectUserApplyByApplyId" parameterType="Long">
+        delete from project_user_apply where apply_id = #{applyId}
+    </delete>
+
+    <delete id="deleteProjectUserApplyByApplyIds" parameterType="String">
+        delete from project_user_apply where apply_id in
+        <foreach item="applyId" collection="array" open="(" separator="," close=")">
+            #{applyId}
+        </foreach>
+    </delete>
+</mapper>

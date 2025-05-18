@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jb.project.mapper.ProjectOperationLogMapper">
+
+    <resultMap type="ProjectOperationLog" id="ProjectOperationLogResult">
+        <result property="logId"    column="log_id"    />
+        <result property="operUserId"    column="oper_user_id"    />
+        <result property="operSubjectId"    column="oper_subject_id"    />
+        <result property="operTime"    column="oper_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="operPage"    column="oper_page"    />
+    </resultMap>
+
+    <sql id="selectProjectOperationLogVo">
+        select project_operation_log.log_id log_id, project_operation_log.oper_user_id oper_user_id, project_operation_log.oper_subject_id oper_subject_id, project_operation_log.oper_time oper_time, project_operation_log.remark remark, project_operation_log.oper_page oper_page from project_operation_log
+
+    </sql>
+
+    <select id="selectProjectOperationLogList" parameterType="ProjectOperationLog" resultMap="ProjectOperationLogResult">
+        <include refid="selectProjectOperationLogVo"/>
+        <where>
+            <if test="operUserId != null "> and project_operation_log.oper_user_id = #{operUserId}</if>
+            <if test="operSubjectId != null "> and project_operation_log.oper_subject_id = #{operSubjectId}</if>
+            <if test="operTime != null "> and project_operation_log.oper_time = #{operTime}</if>
+            <if test="operPage != null  and operPage != ''"> and project_operation_log.oper_page = #{operPage}</if>
+        </where>
+    </select>
+
+    <select id="selectProjectOperationLogByLogId" parameterType="Long" resultMap="ProjectOperationLogResult">
+        <include refid="selectProjectOperationLogVo"/>
+        where log_id = #{logId}
+    </select>
+
+    <insert id="insertProjectOperationLog" parameterType="ProjectOperationLog">
+        insert into project_operation_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="logId != null">log_id,</if>
+            <if test="operUserId != null">oper_user_id,</if>
+            <if test="operSubjectId != null">oper_subject_id,</if>
+            <if test="operTime != null">oper_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="operPage != null">oper_page,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="logId != null">#{logId},</if>
+            <if test="operUserId != null">#{operUserId},</if>
+            <if test="operSubjectId != null">#{operSubjectId},</if>
+            <if test="operTime != null">#{operTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="operPage != null">#{operPage},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProjectOperationLog" parameterType="ProjectOperationLog">
+        update project_operation_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="operUserId != null">oper_user_id = #{operUserId},</if>
+            <if test="operSubjectId != null">oper_subject_id = #{operSubjectId},</if>
+            <if test="operTime != null">oper_time = #{operTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="operPage != null">oper_page = #{operPage},</if>
+        </trim>
+        where log_id = #{logId}
+    </update>
+
+    <delete id="deleteProjectOperationLogByLogId" parameterType="Long">
+        delete from project_operation_log where log_id = #{logId}
+    </delete>
+
+    <delete id="deleteProjectOperationLogByLogIds" parameterType="String">
+        delete from project_operation_log where log_id in
+        <foreach item="logId" collection="array" open="(" separator="," close=")">
+            #{logId}
+        </foreach>
+    </delete>
+</mapper>

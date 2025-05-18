@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jb.project.mapper.ProjectCheckTaskMapper">
+
+    <resultMap type="ProjectCheckTask" id="ProjectCheckTaskResult">
+        <result property="checkTaskId"    column="check_task_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="subjectName"    column="subject_name"    />
+        <result property="projectId"    column="project_id"    />
+        <result property="subjectId"    column="subject_id"    />
+        <result property="indicator1"    column="indicator1"    />
+        <result property="indicator2"    column="indicator2"    />
+        <result property="indicator3"    column="indicator3"    />
+        <result property="indicator4"    column="indicator4"    />
+        <result property="indicator5"    column="indicator5"    />
+        <result property="indicator6"    column="indicator6"    />
+        <result property="taskId"    column="task_id"    />
+    </resultMap>
+
+    <sql id="selectProjectCheckTaskVo">
+        select project_check_task.check_task_id check_task_id,
+               project_check_task.user_id user_id,
+               project_check_task.project_id project_id,
+               project_check_task.subject_id subject_id,
+               sys_user.nick_name subject_name,
+               project_check_task.indicator1 indicator1,
+               project_check_task.indicator2 indicator2,
+               project_check_task.indicator3 indicator3,
+               project_check_task.indicator4 indicator4,
+               project_check_task.indicator5 indicator5,
+               project_check_task.indicator6 indicator6,
+               project_check_task.task_id task_id
+        from project_check_task left join sys_user on project_check_task.subject_id = sys_user.user_id
+
+    </sql>
+
+    <select id="selectProjectCheckTaskList" parameterType="ProjectCheckTask" resultMap="ProjectCheckTaskResult">
+        <include refid="selectProjectCheckTaskVo"/>
+        <where>
+            <if test="userId != null "> and project_check_task.user_id = #{userId}</if>
+            <if test="projectId != null "> and project_check_task.project_id = #{projectId}</if>
+            <if test="subjectId != null "> and project_check_task.subject_id = #{subjectId}</if>
+            <if test="indicator1 != null "> and project_check_task.indicator1 = #{indicator1}</if>
+            <if test="indicator2 != null "> and project_check_task.indicator2 = #{indicator2}</if>
+            <if test="indicator3 != null "> and project_check_task.indicator3 = #{indicator3}</if>
+            <if test="indicator4 != null "> and project_check_task.indicator4 = #{indicator4}</if>
+            <if test="indicator5 != null "> and project_check_task.indicator5 = #{indicator5}</if>
+            <if test="indicator6 != null "> and project_check_task.indicator6 = #{indicator6}</if>
+            <if test="taskId != null "> and project_check_task.task_id = #{taskId}</if>
+        </where>
+        order by project_check_task.check_task_id asc
+    </select>
+
+    <select id="selectProjectCheckTaskListByProjectId" parameterType="Integer" resultMap="ProjectCheckTaskResult">
+        select * from project_check_task <where>
+            <if test="projectId == null "></if>
+            <if test="projectId != null "> and project_id = #{projectId}</if>
+        </where>
+    </select>
+
+    <select id="selectProjectCheckTaskByCheckTaskId" parameterType="Long" resultMap="ProjectCheckTaskResult">
+        <include refid="selectProjectCheckTaskVo"/>
+        where check_task_id = #{checkTaskId}
+    </select>
+
+    <insert id="insertProjectCheckTask" parameterType="ProjectCheckTask" useGeneratedKeys="true" keyProperty="checkTaskId">
+        insert into project_check_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="projectId != null">project_id,</if>
+            <if test="subjectId != null">subject_id,</if>
+            <if test="indicator1 != null">indicator1,</if>
+            <if test="indicator2 != null">indicator2,</if>
+            <if test="indicator3 != null">indicator3,</if>
+            <if test="indicator4 != null">indicator4,</if>
+            <if test="indicator5 != null">indicator5,</if>
+            <if test="indicator6 != null">indicator6,</if>
+            <if test="taskId != null">task_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="projectId != null">#{projectId},</if>
+            <if test="subjectId != null">#{subjectId},</if>
+            <if test="indicator1 != null">#{indicator1},</if>
+            <if test="indicator2 != null">#{indicator2},</if>
+            <if test="indicator3 != null">#{indicator3},</if>
+            <if test="indicator4 != null">#{indicator4},</if>
+            <if test="indicator5 != null">#{indicator5},</if>
+            <if test="indicator6 != null">#{indicator6},</if>
+            <if test="taskId != null">#{taskId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProjectCheckTask" parameterType="ProjectCheckTask">
+        update project_check_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="projectId != null">project_id = #{projectId},</if>
+            <if test="subjectId != null">subject_id = #{subjectId},</if>
+            <if test="indicator1 != null">indicator1 = #{indicator1},</if>
+            <if test="indicator2 != null">indicator2 = #{indicator2},</if>
+            <if test="indicator3 != null">indicator3 = #{indicator3},</if>
+            <if test="indicator4 != null">indicator4 = #{indicator4},</if>
+            <if test="indicator5 != null">indicator5 = #{indicator5},</if>
+            <if test="indicator6 != null">indicator6 = #{indicator6},</if>
+            <if test="taskId != null">task_id = #{taskId},</if>
+        </trim>
+        where check_task_id = #{checkTaskId}
+    </update>
+
+    <delete id="deleteProjectCheckTaskByCheckTaskId" parameterType="Long">
+        delete from project_check_task where check_task_id = #{checkTaskId}
+    </delete>
+
+    <delete id="deleteProjectCheckTaskByCheckTaskIds" parameterType="String">
+        delete from project_check_task where check_task_id in
+        <foreach item="checkTaskId" collection="array" open="(" separator="," close=")">
+            #{checkTaskId}
+        </foreach>
+    </delete>
+
+    <select id="getUserNameByUserId" parameterType="Long" resultType="String">
+        select nick_name from sys_user where user_id = #{userId}
+    </select>
+
+    <select id="getProjectNameByProjectId" parameterType="Long" resultType="String">
+        select project_name from project where project_id = #{projectId}
+    </select>
+</mapper>

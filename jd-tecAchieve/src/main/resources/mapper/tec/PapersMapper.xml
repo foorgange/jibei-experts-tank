@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jd.tecachieve.mapper.PapersMapper">
+
+    <!-- Result Map -->
+    <resultMap id="PapersResultMap" type="com.jd.tecachieve.domain.Papers">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="supervisor_name" property="supervisorName" jdbcType="VARCHAR"/>
+        <result column="paper_title" property="paperTitle" jdbcType="VARCHAR"/>
+        <result column="author" property="author" jdbcType="VARCHAR"/>
+        <result column="publication_venue" property="publicationVenue" jdbcType="VARCHAR"/>
+        <result column="volume_issue_pages" property="volumeIssuePages" jdbcType="VARCHAR"/>
+        <result column="publish_year" property="publishYear" jdbcType="INTEGER"/>
+        <result column="is_corresponding_first_author" property="isCorrespondingFirstAuthor" jdbcType="VARCHAR"/>
+        <result column="ei_sci" property="eiSci" jdbcType="VARCHAR"/>
+        <result column="remarks" property="remarks" jdbcType="VARCHAR"/>
+        <result column="institute_of_supervisor" property="instituteOfSupervisor" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <!-- 定义查询 papers 表的信息 -->
+    <sql id="selectPapersInfoVo">
+        SELECT
+            id,
+            supervisor_name ,
+            paper_title ,
+            author,
+            publication_venue ,
+            volume_issue_pages ,
+            publish_year ,
+            is_corresponding_first_author ,
+            ei_sci ,
+            remarks,
+            institute_of_supervisor
+        FROM papers
+    </sql>
+
+    <!-- 定义resultMap -->
+    <resultMap id="map" type="map">
+        <!-- 自动映射所有字段到Map -->
+    </resultMap>
+
+
+    <!-- Update -->
+    <update id="update" parameterType="com.jd.tecachieve.domain.Papers">
+        UPDATE papers
+        SET
+            supervisor_name = #{supervisorName},
+            paper_title = #{paperTitle},
+            author = #{author},
+            publication_venue = #{publicationVenue},
+            volume_issue_pages = #{volumeIssuePages},
+            publish_year = #{publishYear},
+            is_corresponding_first_author = #{isCorrespondingFirstAuthor},
+            ei_sci = #{eiSci},
+            remarks = #{remarks},
+            institute_of_supervisor = #{instituteOfSupervisor}
+        WHERE id = #{id}
+    </update>
+
+    <!-- Delete -->
+    <delete id="delete" parameterType="int">
+        DELETE FROM papers WHERE id = #{id}
+    </delete>
+
+    <!-- Select by ID -->
+    <select id="selectById" resultMap="PapersResultMap" parameterType="int">
+        SELECT * FROM papers WHERE id = #{id}
+    </select>
+
+    <!-- Select all papers -->
+    <select id="selectAll" resultMap="PapersResultMap">
+        SELECT * FROM papers
+    </select>
+
+
+    <!-- 动态查询论文列表 -->
+    <select id="selectPapersListByPapersQueryVo" parameterType="com.jd.tecachieve.vo.PapersQueryVo" resultMap="PapersResultMap">
+        <include refid="selectPapersInfoVo"/>
+        <where>
+            <!-- 示例：按导师名称模糊查询 -->
+            <if test="supervisorName != null and supervisorName != ''">
+                AND supervisor_name LIKE CONCAT('%', #{supervisorName}, '%')
+            </if>
+
+            <!-- 按论文题目模糊查询 -->
+            <if test="paperTitle != null and paperTitle != ''">
+                AND paper_title LIKE CONCAT('%', #{paperTitle}, '%')
+            </if>
+
+            <!-- 按作者模糊查询 -->
+            <if test="author != null and author != ''">
+                AND author LIKE CONCAT('%', #{author}, '%')
+            </if>
+
+            <!-- 按发表期刊/会议查询 -->
+            <if test="publicationVenue != null and publicationVenue != ''">
+                AND publication_venue LIKE CONCAT('%', #{publicationVenue}, '%')
+            </if>
+
+            <!-- 按发表年份查询 -->
+            <if test="publishYear != null">
+                AND publish_year = #{publishYear}
+            </if>
+
+            <!-- 按是否通讯/一作查询 -->
+            <if test="isCorrespondingFirstAuthor != null and isCorrespondingFirstAuthor != ''">
+                AND is_corresponding_first_author = #{isCorrespondingFirstAuthor}
+            </if>
+
+            <!-- 按收录类型（SCI/EI）查询 -->
+            <if test="eiSci != null and eiSci != ''">
+                AND ei_sci = #{eiSci}
+            </if>
+
+            <!-- 按研究所查询 -->
+            <if test="instituteOfSupervisor != null and instituteOfSupervisor != ''">
+                AND institute_of_supervisor = #{instituteOfSupervisor}
+            </if>
+
+            <!-- 新增：按卷期号，页码模糊查询 -->
+            <if test="volumeIssuePages != null and volumeIssuePages != ''">
+                AND volume_issue_pages LIKE CONCAT('%', #{volumeIssuePages}, '%')
+            </if>
+
+            <!-- 新增：按备注模糊查询 -->
+            <if test="remarks != null and remarks != ''">
+                AND remarks LIKE CONCAT('%', #{remarks}, '%')
+            </if>
+        </where>
+    </select>
+
+    <insert id="dynamicInsertPapers" parameterType="map">
+        INSERT INTO papers
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="param1.paper_title != null">paper_title,</if>
+            <if test="param1.author != null">author,</if>
+            <if test="param1.supervisor_name != null">supervisor_name,</if>
+            <if test="param1.publication_venue != null">publication_venue,</if>
+            <if test="param1.volume_issue_pages != null">volume_issue_pages,</if>
+            <if test="param1.publish_year != null">publish_year,</if>
+            <if test="param1.is_corresponding_first_author != null">is_corresponding_first_author,</if>
+            <if test="param1.ei_sci != null">ei_sci,</if>
+            <if test="param1.remarks != null">remarks,</if>
+            <if test="param1.institute_of_supervisor != null">institute_of_supervisor</if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="param1.paper_title != null">#{param1.paper_title},</if>
+            <if test="param1.author != null">#{param1.author},</if>
+            <if test="param1.supervisor_name != null">#{param1.supervisor_name},</if>
+            <if test="param1.publication_venue != null">#{param1.publication_venue},</if>
+            <if test="param1.volume_issue_pages != null">#{param1.volume_issue_pages},</if>
+            <if test="param1.publish_year != null">#{param1.publish_year},</if>
+            <if test="param1.is_corresponding_first_author != null">#{param1.is_corresponding_first_author},</if>
+            <if test="param1.ei_sci != null">#{param1.ei_sci},</if>
+            <if test="param1.remarks != null">#{param1.remarks},</if>
+            <if test="param1.institute_of_supervisor != null">#{param1.institute_of_supervisor}</if>
+        </trim>
+    </insert>
+
+
+</mapper>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jd.tecachieve.mapper.TecVerticaltopicMapper">
+
+    <resultMap type="com.jd.tecachieve.domain.TecVerticaltopic" id="TecVerticaltopicResult">
+        <result property="topicId"    column="topic_id"    />
+        <result property="achievementid"    column="achievementId"    />
+        <result property="topicCode"    column="topic_code"    />
+        <result property="topicName"    column="topic_name"    />
+        <result property="topicCategory"    column="topic_category"    />
+        <result property="topicSubcategory"    column="topic_subcategory"    />
+    </resultMap>
+
+    <sql id="selectTecVerticaltopicVo">
+        select tec_verticaltopic.topic_id topic_id,
+               tec_verticaltopic.achievementId achievementId,
+               tec_verticaltopic.topic_code topic_code,
+               tec_verticaltopic.topic_name topic_name,
+               tec_verticaltopic.topic_category topic_category,
+               tec_verticaltopic.topic_subcategory topic_subcategory
+        from tec_verticaltopic
+    </sql>
+
+    <select id="selectTecVerticaltopicList" parameterType="TecVerticaltopic" resultMap="TecVerticaltopicResult">
+        <include refid="selectTecVerticaltopicVo"/>
+        <where>
+            <if test="achievementid != null "> and tec_verticaltopic.achievementId = #{achievementid}</if>
+            <if test="topicCode != null  and topicCode != ''"> and topic_code like concat('%', #{topicCode}, '%')</if>
+            <if test="topicName != null  and topicName != ''"> and topic_name like concat('%', #{topicName}, '%')</if>
+            <if test="topicCategory != null  and topicCategory != ''"> and topic_category like concat('%', #{topicCategory}, '%')</if>
+            <if test="topicSubcategory != null  and topicSubcategory != ''"> and topic_subcategory like concat('%', #{topicSubcategory}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectTecVerticaltopicByTopicId" parameterType="Long" resultMap="TecVerticaltopicResult">
+        <include refid="selectTecVerticaltopicVo"/>
+        where topic_id = #{topicId}
+    </select>
+
+    <insert id="insertTecVerticaltopic" parameterType="TecVerticaltopic" useGeneratedKeys="true" keyProperty="topicId">
+        insert into tec_verticaltopic
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="achievementid != null">achievementId,</if>
+            <if test="topicCode != null">topic_code,</if>
+            <if test="topicName != null">topic_name,</if>
+            <if test="topicCategory != null">topic_category,</if>
+            <if test="topicSubcategory != null">topic_subcategory,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="achievementid != null">#{achievementid},</if>
+            <if test="topicCode != null">#{topicCode},</if>
+            <if test="topicName != null">#{topicName},</if>
+            <if test="topicCategory != null">#{topicCategory},</if>
+            <if test="topicSubcategory != null">#{topicSubcategory},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTecVerticaltopic" parameterType="TecVerticaltopic">
+        update tec_verticaltopic
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="achievementid != null">achievementId = #{achievementid},</if>
+            <if test="topicCode != null">topic_code = #{topicCode},</if>
+            <if test="topicName != null">topic_name = #{topicName},</if>
+            <if test="topicCategory != null">topic_category = #{topicCategory},</if>
+            <if test="topicSubcategory != null">topic_subcategory = #{topicSubcategory},</if>
+        </trim>
+        where topic_id = #{topicId}
+    </update>
+
+    <delete id="deleteTecVerticaltopicByTopicId" parameterType="Long">
+        delete from tec_verticaltopic where topic_id = #{topicId}
+    </delete>
+
+    <delete id="deleteTecVerticaltopicByTopicIds" parameterType="String">
+        delete from tec_verticaltopic where topic_id in
+        <foreach item="topicId" collection="array" open="(" separator="," close=")">
+            #{topicId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteTecVerticaltopicByachievementid" parameterType="Long">
+        delete from tec_verticaltopic where achievementid = #{achievementid}
+    </delete>
+</mapper>

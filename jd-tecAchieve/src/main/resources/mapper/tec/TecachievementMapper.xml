@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jd.tecachieve.mapper.TecachievementMapper">
+
+    <resultMap type="com.jd.tecachieve.domain.Tecachievement" id="TecachievementResult">
+        <result property="achievementid"    column="achievementId"    />
+        <result property="achievementname"    column="achievementName"    />
+        <result property="field"    column="field"    />
+        <result property="college"    column="college"    />
+        <result property="way"    column="way"    />
+        <result property="typesresults"    column="typesResults"    />
+        <result property="technologylevel"    column="technologyLevel"    />
+        <result property="advancementleve"    column="advancementLeve"    />
+        <result property="introduction"    column="introduction"    />
+        <result property="intellectualproperty"    column="intellectualProperty"    />
+        <result property="staffid"   column="staffId"   />
+        <result property="contactname"    column="contactName"    />
+        <result property="email"    column="email"    />
+        <result property="phone"    column="phone"    />
+        <result property="address"    column="address"    />
+        <result property="award"    column="award"    />
+        <result property="benefit"    column="benefit"    />
+        <result property="piId"    column="piId"    />
+        <result property="teamId"    column="teamId"    />
+        <result property="introductionImg"  column="introductionImg" />
+        <result property="background" column="background"/>
+        <result property="status" column="status"/>
+        <result property="dept_id" column="dept_id"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <!-- 定义resultMap -->
+    <resultMap id="map" type="map">
+        <!-- 自动映射所有字段到Map -->
+    </resultMap>
+
+    <sql id="selectTecachievementVo">
+        select tecachievement.achievementId achievementId,
+               tecachievement.dept_id dept_id,
+               tecachievement.staffId staffId,
+               tecachievement.achievementName achievementName,
+               tecachievement.field field,
+               tecachievement.college college,
+               tecachievement.way way,
+               tecachievement.typesResults typesResults,
+               tecachievement.technologyLevel technologyLevel,
+               tecachievement.advancementLeve advancementLeve,
+               tecachievement.introduction introduction,
+               tecachievement.intellectualProperty intellectualProperty,
+               tecachievement.contactName contactName,
+               tecachievement.email email,
+               tecachievement.phone phone,
+               tecachievement.address address,
+               tecachievement.award award,
+               tecachievement.benefit benefit,
+               tecachievement.piId piId,
+               tecachievement.teamId teamId,
+               tecachievement.introductionImg introductionImg,
+               tecachievement.background background,
+               tecachievement.status status,
+               tecachievement.create_time create_time
+        from tecachievement
+
+    </sql>
+
+    <select id="selectTecachievementList" parameterType="com.jd.tecachieve.domain.Tecachievement" resultMap="TecachievementResult">
+        <include refid="selectTecachievementVo"/>
+        <where>
+            <if test="achievementname != null  and achievementname != ''"> and achievementName like concat('%', #{achievementname}, '%')</if>
+            <if test="field != null  and field != '' "> and FIND_IN_SET(#{field}, tecachievement.field) > 0</if>
+            <if test="college != null  and college != ''"> and tecachievement.college = #{college}</if>
+            <if test="way != null "> and tecachievement.way = #{way}</if>
+            <if test="typesresults != null "> and tecachievement.typesResults like concat ('%',#{typesresults},'%')</if>
+            <if test="technologylevel != null "> and tecachievement.technologyLevel = #{technologylevel}</if>
+            <if test="advancementleve != null "> and tecachievement.advancementLeve = #{advancementleve}</if>
+            <if test="introduction != null  and introduction != ''"> and tecachievement.introduction = #{introduction}</if>
+            <if test="intellectualproperty != null  and intellectualproperty != ''"> and tecachievement.intellectualProperty = #{intellectualproperty}</if>
+            <if test="staffid != null and staffid != ''">and tecachievement.staffId = #{staffid}</if>
+            <if test="contactname != null  and contactname != ''"> and contactName like concat('%', #{contactname}, '%')</if>
+            <if test="email != null  and email != ''"> and tecachievement.email = #{email}</if>
+            <if test="phone != null  and phone != ''"> and tecachievement.phone = #{phone}</if>
+            <if test="address != null  and address != ''"> and tecachievement.address = #{address}</if>
+            <if test="award != null  and award != ''"> and tecachievement.award = #{award}</if>
+            <if test="benefit != null  and benefit != ''"> and tecachievement.benefit = #{benefit}</if>
+            <if test="piId != null "> and tecachievement.piId = #{piId}</if>
+            <if test="teamId != null "> and tecachievement.teamId = #{teamId}</if>
+            <if test="introductionImg != null "> and tecachievement.introductionImg = #{introductionImg}</if>
+            <if test="background != null and background != ''"> and tecachievement.background = #{background}</if>
+            <if test="status != null and status != ''"> and status = #{status}</if>
+
+            ${params.dataScope}
+        </where>
+    </select>
+
+    <select id="selectTecachievementListByTecachievementVO" parameterType="com.jd.tecachieve.vo.TecachievementVO" resultMap="TecachievementResult">
+        <include refid="selectTecachievementVo"/>
+        <where>
+            <if test="achievementname != null  and achievementname != ''"> and achievementName like concat('%', #{achievementname}, '%')</if>
+            <if test="field != null  and field != '' "> and FIND_IN_SET(#{field}, tecachievement.field) > 0</if>
+            <if test="college != null  and college != ''"> and tecachievement.college = #{college}</if>
+            <if test="way != null "> and tecachievement.way = #{way}</if>
+            <if test="typesresults != null "> and tecachievement.typesResults like concat ('%',#{typesresults},'%')</if>
+            <if test="technologylevel != null "> and tecachievement.technologyLevel = #{technologylevel}</if>
+            <if test="advancementleve != null "> and tecachievement.advancementLeve = #{advancementleve}</if>
+            <if test="introduction != null  and introduction != ''"> and tecachievement.introduction = #{introduction}</if>
+            <if test="intellectualproperty != null  and intellectualproperty != ''"> and tecachievement.intellectualProperty = #{intellectualproperty}</if>
+            <if test="staffid != null and staffid != ''">and tecachievement.staffId = #{staffid}</if>
+            <if test="contactname != null  and contactname != ''"> and contactName like concat('%', #{contactname}, '%')</if>
+            <if test="email != null  and email != ''"> and tecachievement.email = #{email}</if>
+            <if test="phone != null  and phone != ''"> and tecachievement.phone = #{phone}</if>
+            <if test="address != null  and address != ''"> and tecachievement.address = #{address}</if>
+            <if test="award != null  and award != ''"> and tecachievement.award = #{award}</if>
+            <if test="benefit != null  and benefit != ''"> and tecachievement.benefit = #{benefit}</if>
+            <if test="piId != null "> and tecachievement.piId = #{piId}</if>
+            <if test="teamId != null "> and tecachievement.teamId = #{teamId}</if>
+            <if test="introductionImg != null "> and tecachievement.introductionImg = #{introductionImg}</if>
+            <if test="background != null and background != ''"> and tecachievement.background = #{background}</if>
+            <if test="status != null and status != ''"> and status = #{status}</if>
+             <if test="tecVerticaltopic != null and tecVerticaltopic != ''">
+                 <if test="tecVerticaltopic.topicCategory != null and tecVerticaltopic.topicCategory != ''">
+                     and achievementId IN (
+                     SELECT
+                     achievementId
+                     FROM
+                     tec_verticaltopic
+                     WHERE
+                     topic_category = #{tecVerticaltopic.topicCategory}
+                     <if test="tecVerticaltopic.topicSubcategory != null and tecVerticaltopic.topicSubcategory != ''">
+                         AND topic_subcategory = #{tecVerticaltopic.topicSubcategory}
+                     </if>
+                     )
+                 </if>
+             </if>
+            <if test="startTime != null and endTime !=null"> and create_time between #{startTime} and #{endTime}</if>
+            <if test="startTime != null and endTime == null"> and create_time = #{startTime}</if>
+            <if test="endTime != null and startTime == null "> and create_time = #{endTime}</if>
+
+
+            ${params.dataScope}
+        </where>
+    </select>
+
+
+
+    <select id="selectTecachievementByAchievementid" parameterType="Long" resultMap="TecachievementResult">
+        <include refid="selectTecachievementVo"/>
+        where  achievementId = #{achievementid}
+    </select>
+
+    <select id="selectTecachievementByAchievementidArray" parameterType="Long" resultType="com.jd.tecachieve.domain.Tecachievement">
+        <include refid="selectTecachievementVo"/>
+        where achievementId in
+        <foreach item="achievementid" collection="array" open="(" separator="," close=")">
+            #{achievementid}
+        </foreach>
+    </select>
+
+
+    <insert id="insertTecachievement" parameterType="com.jd.tecachieve.domain.Tecachievement" useGeneratedKeys="true" keyProperty="achievementid">
+        insert into tecachievement
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="achievementname != null">achievementName,</if>
+            <if test="field != null">field,</if>
+            <if test="college != null">college,</if>
+            <if test="way != null">way,</if>
+            <if test="typesresults != null">typesResults,</if>
+            <if test="technologylevel != null">technologyLevel,</if>
+            <if test="advancementleve != null">advancementLeve,</if>
+            <if test="introduction != null">introduction,</if>
+            <if test="intellectualproperty != null">intellectualProperty,</if>
+            <if test="staffid != null">staffId,</if>
+            <if test="contactname != null">contactName,</if>
+            <if test="email != null">email,</if>
+            <if test="phone != null">phone,</if>
+            <if test="address != null">address,</if>
+            <if test="award != null">award,</if>
+            <if test="benefit != null">benefit,</if>
+            <if test="piId != null">piId,</if>
+            <if test="teamId != null">teamId,</if>
+            <if test="introductionImg != null">introductionImg,</if>
+            <if test="background != null">background,</if>
+            <if test="status != null">status,</if>
+            <if test="dept_id != null">dept_id,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="achievementname != null">#{achievementname},</if>
+            <if test="field != null">#{field},</if>
+            <if test="college != null">#{college},</if>
+            <if test="way != null">#{way},</if>
+            <if test="typesresults != null">#{typesresults},</if>
+            <if test="technologylevel != null">#{technologylevel},</if>
+            <if test="advancementleve != null">#{advancementleve},</if>
+            <if test="introduction != null">#{introduction},</if>
+            <if test="intellectualproperty != null">#{intellectualproperty},</if>
+            <if test="staffid != null">#{staffid},</if>
+            <if test="contactname != null">#{contactname},</if>
+            <if test="email != null">#{email},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="address != null">#{address},</if>
+            <if test="award != null">#{award},</if>
+            <if test="benefit != null">#{benefit},</if>
+            <if test="piId != null">#{piId},</if>
+            <if test="teamId != null">#{teamId},</if>
+            <if test="introductionImg != null">#{introductionImg},</if>
+            <if test="background != null">#{background},</if>
+            <if test="status != null">#{status},</if>
+            <if test="dept_id != null">#{dept_id},</if>
+            Now()
+         </trim>
+    </insert>
+
+    <update id="updateTecachievement" parameterType="com.jd.tecachieve.domain.Tecachievement">
+        update tecachievement
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="achievementname != null">achievementName = #{achievementname},</if>
+            <if test="field != null">field = #{field},</if>
+            <if test="college != null">college = #{college},</if>
+            <if test="way != null">way = #{way},</if>
+            <if test="typesresults != null">typesResults = #{typesresults},</if>
+            <if test="technologylevel != null">technologyLevel = #{technologylevel},</if>
+            <if test="advancementleve != null">advancementLeve = #{advancementleve},</if>
+            <if test="introduction != null">introduction = #{introduction},</if>
+            <if test="intellectualproperty != null">intellectualProperty = #{intellectualproperty},</if>
+            <if test="staffid != null">staffId = #{staffid},</if>
+            <if test="contactname != null">contactName = #{contactname},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="award != null">award = #{award},</if>
+            <if test="benefit != null">benefit = #{benefit},</if>
+            <if test="piId != null">piId = #{piId},</if>
+            <if test="teamId != null">teamId = #{teamId},</if>
+            <if test="introductionImg != null">introductionImg = #{introductionImg},</if>
+            <if test="background != null">background = #{background},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="dept_id != null and dept_id != ''">dept_id = #{dept_id}</if>
+        </trim>
+        where  achievementId = #{achievementid}
+    </update>
+
+<!--    <update id="updateTecachievementBatch" parameterType="java.util.List">-->
+<!--        update tecachievement SET status = #{status} where  achievementId in-->
+<!--        <foreach item="achievementid" collection="list" open="(" separator="," close=")">-->
+<!--            #{achievementid}-->
+<!--        </foreach>-->
+<!--    </update>-->
+
+    <update id="updateTecachievementStatus" parameterType="com.jd.tecachieve.domain.Tecachievement">
+        UPDATE tecachievement
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="status != null">status = #{status}</if>
+        </trim>
+        WHERE achievementId = #{achievementid}
+    </update>
+
+    <delete id="deleteTecachievementByAchievementid" parameterType="Long">
+        delete from tecachievement where  achievementId = #{achievementid}
+    </delete>
+
+    <delete id="deleteTecachievementByAchievementids" parameterType="String">
+        delete from tecachievement where  achievementId in
+        <foreach item="achievementid" collection="array" open="(" separator="," close=")">
+            #{achievementid}
+        </foreach>
+    </delete>
+
+    <select id="selectTecAchiListByPiId" parameterType="Long" resultMap="TecachievementResult">
+        <include refid="selectTecachievementVo"/>
+        LEFT JOIN tec_pi on tec_pi.pi_id
+        where tec_pi.pi_id = tecachievement.piId
+        AND tec_pi.pi_id = #{piId}
+        AND tecachievement.status = 4
+    </select>
+
+
+
+
+    <!--
+        查询语句：统计 way 字段中各个数字出现的次数
+     -->
+    <select id="countWayValues" resultMap="map">
+        SELECT
+            TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(t.way, ',', numbers.n), ',', -1)) AS way_value,
+            COUNT(*) AS count
+        FROM
+            tecachievement t
+            JOIN
+            -- 构造一个数字序列，用于分割逗号分隔的字符串
+            (SELECT 1 AS n UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5) numbers
+        ON
+            CHAR_LENGTH(t.way) - CHAR_LENGTH(REPLACE(t.way, ',', '')) >= numbers.n - 1
+        WHERE
+            t.way IS NOT NULL AND t.way != ''
+        GROUP BY
+            TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(t.way, ',', numbers.n), ',', -1))
+        HAVING
+            way_value != '' -- 过滤掉空值
+        ORDER BY
+            way_value ASC; -- 按照数字顺序排序
+    </select>
+
+    <select id="countAdvancementLevels" resultMap="map">
+        SELECT
+            COALESCE(advancementLeve, 6) AS level,
+            COUNT(*) AS count
+        FROM
+            tecachievement
+        WHERE
+            COALESCE(advancementLeve, 6) BETWEEN 1 AND 6
+        GROUP BY
+            COALESCE(advancementLeve, 6)
+        ORDER BY
+            level;
+    </select>
+
+    <select id="countCollegeOccurrences" resultMap="map">
+        SELECT college, COUNT(*) AS count
+        FROM tecachievement
+        GROUP BY college
+        ORDER BY college
+    </select>
+
+    <select id="countTechnologyLevels" resultMap="map">
+        SELECT
+            technologyLevel,
+            COUNT(*) AS count
+        FROM
+            tecachievement
+        WHERE
+            technologyLevel IS NOT NULL
+          AND technologyLevel BETWEEN 1 AND 6
+        GROUP BY
+            technologyLevel
+        ORDER BY
+            technologyLevel
+    </select>
+
+
+    <!--
+    查询语句：统计 field 字段中各个数字出现的次数
+ -->
+    <select id="countFieldNumbers" resultMap="map">
+        WITH RECURSIVE SplitField AS (
+            SELECT
+                achievementId,
+                TRIM(SUBSTRING_INDEX(field, ',', 1)) AS num,
+                SUBSTRING(field, LENGTH(SUBSTRING_INDEX(field, ',', 1)) + 2) AS rest_field,
+                1 AS level
+            FROM tecachievement
+            WHERE field IS NOT NULL AND field != ''
+        UNION ALL
+        SELECT
+            achievementId,
+            TRIM(SUBSTRING_INDEX(rest_field, ',', 1)),
+            SUBSTRING(rest_field, LENGTH(SUBSTRING_INDEX(rest_field, ',', 1)) + 2),
+            level + 1
+        FROM SplitField
+        WHERE rest_field != ''
+    )
+        SELECT num, COUNT(*) as count
+        FROM SplitField
+        WHERE num REGEXP '^[0-9]+$'
+        GROUP BY num
+        ORDER BY num;
+    </select>
+
+</mapper>

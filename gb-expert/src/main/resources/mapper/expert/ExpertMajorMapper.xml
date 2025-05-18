@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jb.expert.mapper.ExpertMajorMapper">
+
+    <resultMap type="ExpertMajor" id="ExpertMajorResult">
+        <result property="majorId"    column="major_id"    />
+        <result property="majorName"    column="major_name"    />
+    </resultMap>
+
+    <sql id="selectExpertMajorVo">
+        select expert_major.major_id major_id, expert_major.major_name major_name from expert_major
+
+    </sql>
+
+    <select id="selectExpertMajorList" parameterType="ExpertMajor" resultMap="ExpertMajorResult">
+        <include refid="selectExpertMajorVo"/>
+        <where>
+            <if test="majorName != null  and majorName != ''"> and major_name like concat('%', #{majorName}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectExpertMajorByMajorId" parameterType="Long" resultMap="ExpertMajorResult">
+        <include refid="selectExpertMajorVo"/>
+        where major_id = #{majorId}
+    </select>
+
+    <insert id="insertExpertMajor" parameterType="ExpertMajor" useGeneratedKeys="true" keyProperty="majorId">
+        insert into expert_major
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="majorName != null">major_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="majorName != null">#{majorName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateExpertMajor" parameterType="ExpertMajor">
+        update expert_major
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="majorName != null">major_name = #{majorName},</if>
+        </trim>
+        where major_id = #{majorId}
+    </update>
+
+    <delete id="deleteExpertMajorByMajorId" parameterType="Long">
+        delete from expert_major where major_id = #{majorId}
+    </delete>
+
+    <delete id="deleteExpertMajorByMajorIds" parameterType="String">
+        delete from expert_major where major_id in
+        <foreach item="majorId" collection="array" open="(" separator="," close=")">
+            #{majorId}
+        </foreach>
+    </delete>
+</mapper>

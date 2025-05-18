@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jd.tecachieve.mapper.TecteamMapper">
+
+    <resultMap type="com.jd.tecachieve.domain.Tecteam" id="TecteamResult">
+        <result property="teamId"    column="team_id"    />
+        <result property="teamStaffId"    column="team_staffId"  />
+        <result property="teamName"    column="team_name"    />
+        <result property="teamSex"    column="team_sex"    />
+        <result property="teamPhone"    column="team_phone"     />
+        <result property="teamEmail"    column="team_email"     />
+        <result property="teamBirthday"    column="team_birthday"    />
+        <result property="teamJobTitle"    column="team_jobTitle"    />
+        <result property="teamCommAddress"    column="team_commAddress"    />
+        <result property="teamJobAddress"    column="team_jobAddress"     />
+    </resultMap>
+
+    <sql id="selectTecteamVo">
+        select
+               tec_team.team_id ,
+               tec_team.team_staffId ,
+               tec_team.team_name ,
+               tec_team.team_sex ,
+               tec_team.team_phone ,
+               tec_team.team_email  ,
+               tec_team.team_birthday ,
+               tec_team.team_jobTitle ,
+               tec_team.team_commAddress ,
+               tec_team.team_jobAddress
+                from tec_team
+    </sql>
+
+    <select id="selectTecteamList" parameterType="com.jd.tecachieve.domain.Tecteam" resultMap="TecteamResult">
+        <include refid="selectTecteamVo"/>
+        <where>
+            <if test="teamId != null "> and tec_team.team_id = #{teamId}</if>
+            <if test="teamStaffId != null">and tec_team.team_staffId = #{teamStaffId}</if>
+            <if test="teamName != null  and teamName != ''"> and team_name like concat('%', #{teamName}, '%')</if>
+            <if test="teamSex != null  and teamSex != ''"> and tec_team.team_sex = #{teamSex}</if>
+            <if test="teamPhone != null  and teamPhone != ''"> and tec_team.team_phone = #{teamPhone}</if>
+            <if test="teamEmail != null  and teamEmail != ''"> and tec_team.team_email = #{teamEmail}</if>
+            <if test="teamBirthday != null  and teamBirthday != ''"> and tec_team.team_birthday = #{teamBirthday}</if>
+            <if test="teamJobTitle != null  and teamJobTitle != ''"> and tec_team.team_jobTitle = #{teamJobTitle}</if>
+            <if test="teamCommAddress != null  and teamCommAddress != ''"> and tec_team.team_commAddress = #{teamCommAddress}</if>
+            <if test="teamJobAddress != null  and teamJobAddress != ''"> and tec_team.team_jobAddress = #{teamJobAddress}</if>
+           </where>
+    </select>
+
+    <select id="selectTecteamByTeamid" parameterType="Long" resultMap="TecteamResult">
+        <include refid="selectTecteamVo"/>
+        where team_id = #{teamId}
+    </select>
+
+    <insert id="insertTecteam" parameterType="com.jd.tecachieve.domain.Tecteam">
+        insert into tec_team
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="teamId != null">team_id,</if>
+            <if test="teamStaffId != null">team_staffId,</if>
+            <if test="teamName != null">team_name,</if>
+            <if test="teamSex != null">team_sex,</if>
+            <if test="teamPhone != null">team_phone,</if>
+            <if test="teamEmail != null">team_email,</if>
+            <if test="teamBirthday != null">team_birthday,</if>
+            <if test="teamJobTitle != null">team_jobTitle,</if>
+            <if test="teamCommAddress != null">team_commAddress,</if>
+            <if test="teamJobAddress != null">team_jobAddress,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="teamId != null">#{teamId},</if>
+            <if test="teamStaffId != null">#{teamStaffId},</if>
+            <if test="teamName != null">#{teamName},</if>
+            <if test="teamSex != null">#{teamSex},</if>
+            <if test="teamPhone != null">#{teamPhone},</if>
+            <if test="teamEmail != null">#{teamEmail},</if>
+            <if test="teamBirthday != null">#{teamBirthday},</if>
+            <if test="teamJobTitle != null">#{teamJobTitle},</if>
+            <if test="teamCommAddress != null">#{teamCommAddress},</if>
+            <if test="teamJobAddress != null">#{teamJobAddress},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTecteam" parameterType="com.jd.tecachieve.domain.Tecteam">
+        update tec_team
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="teamStaffId != null">team_staffId = #{teamStaffId},</if>
+            <if test="teamName != null">team_name = #{teamName},</if>
+            <if test="teamSex != null">team_sex = #{teamSex},</if>
+            <if test="teamPhone != null">team_phone = #{teamPhone},</if>
+            <if test="teamEmail != null">team_email = #{teamEmail},</if>
+            <if test="teamBirthday != null">team_birthday = #{teamBirthday},</if>
+            <if test="teamJobTitle != null">team_jobTitle = #{teamJobTitle},</if>
+            <if test="teamCommAddress != null">team_commAddress = #{teamCommAddress},</if>
+            <if test="teamJobAddress != null">team_jobAddress = #{teamJobAddress},</if>
+        </trim>
+        where team_id = #{teamId}
+    </update>
+
+    <delete id="deleteTecteamByTeamid" parameterType="Long">
+        delete from tec_team where team_id = #{teamId}
+    </delete>
+
+    <delete id="deleteTecteamByTeamids" parameterType="String">
+        delete from tec_team where team_id in
+        <foreach item="teamId" collection="array" open="(" separator="," close=")">
+            #{teamId}
+        </foreach>
+    </delete>
+</mapper>
