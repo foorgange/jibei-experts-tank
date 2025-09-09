@@ -4,7 +4,7 @@ ruoyi:
   version: 3.7.0
   copyrightYear: 2021
   demoEnabled: true
-  profile: E:/fileUpload
+  profile: /www/wwwroot/ruoyi/upload
   addressEnabled: false
   captchaType: math
 
@@ -12,7 +12,8 @@ ruoyi:
 server:
   port: 8090
   servlet:
-    context-path: /
+    context-path: /prod-api
+
   tomcat:
     uri-encoding: UTF-8
     max-threads: 800
@@ -39,7 +40,7 @@ spring:
       enabled: true
   devtools:
     restart:
-      enabled: true
+      enabled: false
 
   redis:
     host: localhost
@@ -57,8 +58,8 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/mydb_jibei?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8
-    username: root
-    password: "0907"
+    username: mydb_jibei
+    password: "5nhztGSsSxACd556"
     druid:
       initialSize: 5
       minIdle: 10
@@ -112,7 +113,7 @@ pagehelper:
 # Swagger配置
 swagger:
   enabled: true
-  pathMapping: /dev-api
+  pathMapping: /prod-api
 
 # 防止XSS攻击
 xss:
